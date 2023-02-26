@@ -25,9 +25,9 @@ public class WordCount {
     public void map(Object key, Text value, Context context
                     ) throws IOException, InterruptedException {
       Configuration conf = context.getConfiguration();
-      private String commonSeparator = conf.get("Separator.Common");
-      String[] itr = value.toString().split(commonSeparator);
-      for(int index=1;index < itr.length;index++)
+      String commonSeparator = conf.get("Separator.Common");
+      String itr = value.toString().split(commonSeparator);
+      for(int index=1;index < itr.length();index++)
       {
         word.set(itr[index]);
         context.write(word, one);
