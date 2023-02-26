@@ -1,4 +1,4 @@
-#!/bin/bash
+e#!/bin/bash
 #DO NOT MODIFIY!!!
 #SBATCH --job-name=ASSIGN_1
 #SBATCH -o ASSIGN_1.out
