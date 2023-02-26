@@ -18,13 +18,14 @@ public class WordCount {
 
   public static class TokenizerMapper
        extends Mapper<Object, Text, Text, IntWritable>{
-
     private final static IntWritable one = new IntWritable(1);
     private Text word = new Text();
-    private String commonSeparator = conf.get("Separator.Common");
+
 
     public void map(Object key, Text value, Context context
                     ) throws IOException, InterruptedException {
+      Configuration conf = context.getConfiguration();
+      private String commonSeparator = conf.get("Separator.Common");
       String[] itr = value.toString().split(commonSeparator);
       for(int index=1;index < itr.length;index++)
       {
