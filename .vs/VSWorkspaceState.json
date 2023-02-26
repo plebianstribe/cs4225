@@ -1,0 +1,13 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\0hadoopTest",
+    "\\0hadoopTest\\wordcount",
+    "\\0hadoopTest\\wordcount\\input",
+    "\\0hadoopTest\\wordcount\\output",
+    "\\1commonWordsAssgn",
+    "\\1commonWordsAssgn\\data"
+  ],
+  "SelectedNode": "\\1commonWordsAssgn",
+  "PreviewInSolutionExplorer": false
+}
