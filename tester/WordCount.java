@@ -26,12 +26,13 @@ public class WordCount {
                     ) throws IOException, InterruptedException {
       Configuration conf = context.getConfiguration();
       String commonSeparator = conf.get("Separator.Common");
-      String[] itr = value.toString().split(commonSeparator);
-      for(String str:itr)
-      {
-        if (str.length()>0) {
-          word.set(str);
-          context.write(word, one);
+      if (value != null && !value.isEmpty()) {
+        String[] itr = value.toString().split(commonSeparator);
+        for (String str : itr) {
+          if (str.length() > 0) {
+            word.set(str);
+            context.write(word, one);
+          }
         }
       }
     }
