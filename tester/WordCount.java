@@ -21,14 +21,14 @@ public class WordCount {
 
     private final static IntWritable one = new IntWritable(1);
     private Text word = new Text();
-    commonSeparator=configuration.get("Separator.Common");
+    private String commonSeparator = configuration.get("Separator.Common");
 
     public void map(Object key, Text value, Context context
                     ) throws IOException, InterruptedException {
       String[] itr = value.toString().split(separator);
       for(int index=1;index < values.length;index++)
       {
-        word.set(values[index])
+        word.set(values[index]);
         context.write(word, one);
       }
       while (itr.hasMoreTokens()) {
@@ -56,7 +56,7 @@ public class WordCount {
 
   public static void main(String[] args) throws Exception {
     Configuration conf = new Configuration();
-    conf.set("Separator.common", "\s\t\n\r\f");
+    conf.set("Separator.common", "\\s\\t\\n\\r\\f");
     Job job = Job.getInstance(conf, "word count");
     job.setJarByClass(WordCount.class);
     job.setMapperClass(TokenizerMapper.class);
