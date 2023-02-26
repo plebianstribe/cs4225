@@ -21,18 +21,14 @@ public class WordCount {
 
     private final static IntWritable one = new IntWritable(1);
     private Text word = new Text();
-    private String commonSeparator = configuration.get("Separator.Common");
+    private String commonSeparator = conf.get("Separator.Common");
 
     public void map(Object key, Text value, Context context
                     ) throws IOException, InterruptedException {
-      String[] itr = value.toString().split(separator);
-      for(int index=1;index < values.length;index++)
+      String[] itr = value.toString().split(commonSeparator);
+      for(int index=1;index < itr.length;index++)
       {
-        word.set(values[index]);
-        context.write(word, one);
-      }
-      while (itr.hasMoreTokens()) {
-        word.set(itr.nextToken());
+        word.set(itr[index]);
         context.write(word, one);
       }
     }
