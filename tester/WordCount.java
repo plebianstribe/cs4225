@@ -26,11 +26,13 @@ public class WordCount {
                     ) throws IOException, InterruptedException {
       Configuration conf = context.getConfiguration();
       String commonSeparator = conf.get("Separator.Common");
-      String itr = value.toString().split(commonSeparator);
-      for(int index=1;index < itr.length();index++)
+      String[] itr = value.toString().split(commonSeparator,0);
+      for(String str:itr)
       {
-        word.set(itr[index]);
-        context.write(word, one);
+        if (str.length()>0) {
+          word.set(str);
+          context.write(word, one);
+        }
       }
     }
   }
@@ -53,7 +55,7 @@ public class WordCount {
 
   public static void main(String[] args) throws Exception {
     Configuration conf = new Configuration();
-    conf.set("Separator.common", "\\s\\t\\n\\r\\f");
+    conf.set("Separator.common", "[\\s\\t\\n\\r\\f]");
     Job job = Job.getInstance(conf, "word count");
     job.setJarByClass(WordCount.class);
     job.setMapperClass(TokenizerMapper.class);
