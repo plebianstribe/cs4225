@@ -102,7 +102,7 @@ public class TopkCommonWords {
     }
 
     public static class SortMap
-            extends Mapper<Object, Text, IntWritable, Text>{
+            extends Mapper<Object, Text, Text, IntWritable>{
         private IntWritable count = new IntWritable();
         private Text word = new Text();
         private TreeMap<Integer, ArrayList<String>> tmap;
@@ -125,7 +125,7 @@ public class TopkCommonWords {
                 //context.write(count, word);
                 ArrayList<String> as = new ArrayList<String>();
                 if (tmap.containsKey(count.get())){
-                    as = tmap.getValue();
+                    as = tmap.get(count.get());
                 }
                 else {
                     as = new ArrayList<String>();
@@ -158,10 +158,10 @@ public class TopkCommonWords {
 
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
-        /*
+
         FileSystem fs = FileSystem.get(conf);
         Path interDirPath = new Path("/home/course/cs4225/cs4225_assign/temp/assign1_inter/A0223939W"); // REPLACE THIS WITH YOUR OWN ID!
-        */
+
         java.nio.file.Path stopPath = java.nio.file.Path.of(args[2]);
         String data = new String();
         try (Stream<String> lines = Files.lines(stopPath))
