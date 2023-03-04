@@ -7,10 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileSystem;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -59,9 +56,9 @@ public class TopkCommonWords {
             //Makes an array of individual words split by separators give
             //Runs through array and writes output for each entry IF it does not appear in stopwords AND longer than 4 characters
             String[] values = value.toString().split(separator);
-            String[] stopArray = stopwords.split("\s+");
+            String[] stopArray = stopwords.split("\\s+");
             List<String> stopList = new ArrayList<>(Arrays.asList(stopArray));
-            for (String str : itr) {
+            for (String str : values) {
                 if (str.length() > 4) {
                     if (!stopList.contains(str)) {
                         word.set(str);
@@ -103,46 +100,39 @@ public class TopkCommonWords {
 
     public static class SortMap
             extends Mapper<Object, Text, IntWritable, Text>{
+        private IntWritable count = new IntWritable();
         private Text word = new Text();
-        private String separator = new String();
-        private String stopwords = new String();
+
+        private TreeMap<Integer, String> tmap;
 
         public void setup(Configuration conf) {
-            /*InputStream is = FileSystem.get(conf).open(new Path(conf.get("stopwords.path")));
-
-            System.out.println(is);
-            System.out.println(is.getClass());
-            */
-
-            stopwords = conf.get("Separator.stopwords");
-            separator = conf.get("Separator.common");
+            tmap = new TreeMap<Integer, String>();
         }
 
         public void map(Object key, Text value, Context context
         ) throws IOException, InterruptedException {
-            /*
-            //splits value which is input to individual tokens
-            StringTokenizer itr = new StringTokenizer(value.toString());
+            String[] values = value.toString().split("\\R");
+            String valueOut = values[0];
+            Integer keyOut = Integer.parseInt(values[1]);
 
-            //iterates through each token to add the word and its count to context (which is a dict?)
-            while (itr.hasMoreTokens()) {
-                word.set(itr.nextToken());
-                context.write(word, one);
-            }
-            */
-
-            //Makes an array of individual words split by separators give
-            //Runs through array and writes output for each entry IF it does not appear in stopwords AND longer than 4 characters
-            String[] values = value.toString().split(separator);
-            String[] stopArray = stopwords.split("\s+");
-            List<String> stopList = new ArrayList<>(Arrays.asList(stopArray));
-            for (String str : itr) {
-                if (str.length() > 4) {
-                    if (!stopList.contains(str)) {
-                        word.set(str);
-                        context.write(word, one);
-                    }
+            for (String str : values) {
+                String[] smol = str.split("\\t");
+                tmap.put(Integer.parseInt(smol[1]), smol[0]);
+                if (tmap.size() > 10) {
+                    tmap.remove(tmap.firstKey());
                 }
+            }
+        }
+        public void submit(Context context)
+                throws IOException, InterruptedException
+        {
+            for (Map.Entry<Integer, String> entry :
+                    tmap.entrySet()) {
+
+                count.set(entry.getKey());
+                word.set(entry.getValue());
+
+                context.write(name, count);
             }
         }
     }
@@ -189,7 +179,7 @@ public class TopkCommonWords {
         String data = new String(array);
 
         conf.set("Separator.stopwords", data);
-        conf.set("Separator.common", "\s+");
+        conf.set("Separator.common", "\\s+");
 
         //\s\t\n\r\f
         Job job = Job.getInstance(conf, "Top k Common Words");
