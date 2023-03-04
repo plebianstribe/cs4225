@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -101,7 +102,6 @@ public class TopkCommonWords {
         }
     }
 
-    /*
     public static class SortMap
             extends Mapper<Object, Text, IntWritable, Text>{
         private IntWritable count = new IntWritable();
@@ -134,7 +134,7 @@ public class TopkCommonWords {
                            Context context
         ) throws IOException, InterruptedException {
             tmap.put(value.toString(), key.get());
-              /*
+
             if (tmap.size() > 10) {
                 tmap.remove(tmap.firstKey());
             }
@@ -151,7 +151,7 @@ public class TopkCommonWords {
             }
         }
     }
-    */
+
 
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
@@ -159,7 +159,7 @@ public class TopkCommonWords {
         FileSystem fs = FileSystem.get(conf);
         Path interDirPath = new Path("/home/course/cs4225/cs4225_assign/temp/assign1_inter/A0223939W"); // REPLACE THIS WITH YOUR OWN ID!
         */
-        Path stopPath = new Path(args[2]);
+        Path stopPath = Path.of(args[2]);
         String data = new String();
         try (Stream<String> lines = Files.lines(stopPath))
         {
@@ -197,9 +197,10 @@ public class TopkCommonWords {
         Job job2 = Job.getInstance(conf2, "Sorting");
         job2.setJarByClass(TopkCommonWords.class);
         job2.setMapperClass(SortMap.class);
+        job2.setMaxInputSplitSize(job2, Files.size()
         job2.setCombinerClass(SortCombine.class);
         job.setReducerClass(SortReduce.class);
-        job2.setNumReduceTasks(1)
+
         job2.setMapOutputKeyClass(IntWritable.class);
         job2.setMapOutputValueClass(Text.class);
         job2.setOutputKeyClass(Text.class);
