@@ -3,6 +3,7 @@ ENTER YOUR NAME HERE
 NAME: Nicholas Tan Kian Boon
 MATRICULATION NUMBER: A0223939W
 */
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileSystem;
@@ -22,19 +23,21 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 public class TopkCommonWords {
     public static class TokenizerMapper
             extends Mapper<Object, Text, Text, IntWritable>{
+        private final static IntWritable one = new IntWritable(1);
+        private Text word = new Text();
+        private String separator = new String();
+        private String stopwords = new String();
+
         public void setup(Configuration conf) {
-            InputStream is = FileSystem.get(conf).open(new Path(conf.get("stopwords.path")));
+            /*InputStream is = FileSystem.get(conf).open(new Path(conf.get("stopwords.path")));
 
             System.out.println(is);
             System.out.println(is.getClass());
+            */
 
+            stopwords = conf.get("Separator.stopwords");
             separator = conf.get("Separator.common");
-
-            // read centroid values
         }
-
-        private final static IntWritable one = new IntWritable(1);
-        private Text word = new Text();
 
         public void map(Object key, Text value, Context context
         ) throws IOException, InterruptedException {
@@ -70,9 +73,16 @@ public class TopkCommonWords {
     }
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
+
         Path stopPath = new Path(args[2]);
-        conf.set("stopwords.path", stopPath);
+        InputStream is = new FileInputStream(args[2]);
+        byte[] array = new byte[100];
+        is.read(array);
+        String data = new String(array);
+
+        conf.set("Separator.stopwords", data);
         conf.set("Separator.common", "//s");
+
         //\s\t\n\r\f
         Job job = Job.getInstance(conf, "Top k Common Words");
         job.setJarByClass(TopkCommonWords.class);
