@@ -15,6 +15,7 @@ echo "Deleting previous files"
 hdfs dfs -rm -r ./temp/
 hdfs dfs -mkdir -p ./temp/
 hdfs dfs -mkdir ./temp/input/
+hdfs dfs -mkdir ./temp/output/
 echo "Uploading input files"
 hdfs dfs -put ./data/* ./temp/input/
 echo "Submit job"
