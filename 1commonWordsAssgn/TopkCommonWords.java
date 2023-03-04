@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -111,7 +110,7 @@ public class TopkCommonWords {
 
         public void setup(Configuration conf) {
             tmap = new TreeMap<Integer, ArrayList<String>>(Collections.reverseOrder());
-            kMap = conf.get("k");
+            kMap = Integer.parseInt(conf.get("k"));
         }
         public void map(Object key, Text value, Context context
         ) throws IOException, InterruptedException {
@@ -124,11 +123,12 @@ public class TopkCommonWords {
                 count.set(Integer.parseInt(smol[1]));
                 //word.set(smol[0]);
                 //context.write(count, word);
+                ArrayList<String> as = new ArrayList<String>();
                 if (tmap.containsKey(count.get())){
-                    ArrayList<String> as = tmap.getValue();
+                    as = tmap.getValue();
                 }
                 else {
-                    ArrayList<String> as = new ArrayList<String>();
+                    as = new ArrayList<String>();
                 }
                 as.add(value.toString());
                 tmap.put(count.get(), as);
@@ -162,7 +162,7 @@ public class TopkCommonWords {
         FileSystem fs = FileSystem.get(conf);
         Path interDirPath = new Path("/home/course/cs4225/cs4225_assign/temp/assign1_inter/A0223939W"); // REPLACE THIS WITH YOUR OWN ID!
         */
-        Path stopPath = Path.of(args[2]);
+        java.nio.file.Path stopPath = java.nio.file.Path.of(args[2]);
         String data = new String();
         try (Stream<String> lines = Files.lines(stopPath))
         {
@@ -193,7 +193,7 @@ public class TopkCommonWords {
 
         job.waitForCompletion(true);
         Configuration conf2 = new Configuration();
-        conf2.setInt("k", new Int(args[4]));
+        conf2.setInt("k", Integer.parseInt(args[4]));
         Job job2 = Job.getInstance(conf2, "Sorting");
         job2.setJarByClass(TopkCommonWords.class);
         job2.setMapperClass(SortMap.class);
