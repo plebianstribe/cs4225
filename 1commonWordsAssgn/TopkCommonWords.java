@@ -4,6 +4,8 @@ NAME: Nicholas Tan Kian Boon
 MATRICULATION NUMBER: A0223939W
 */
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.FileSystem;
 import java.util.StringTokenizer;
 
 import org.apache.hadoop.conf.Configuration;
@@ -20,13 +22,22 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 public class TopkCommonWords {
     public static class TokenizerMapper
             extends Mapper<Object, Text, Text, IntWritable>{
+        public void setup(Configuration conf) {
+            InputStream is = FileSystem.get(conf).open(new Path(conf.get("stopwords.path")));
+
+            System.out.println(is);
+            System.out.println(is.getClass());
+
+            separator = conf.get("Separator.common");
+
+            // read centroid values
+        }
 
         private final static IntWritable one = new IntWritable(1);
         private Text word = new Text();
 
         public void map(Object key, Text value, Context context
         ) throws IOException, InterruptedException {
-
             //splits value which is input to individual tokens
             StringTokenizer itr = new StringTokenizer(value.toString());
 
@@ -35,6 +46,10 @@ public class TopkCommonWords {
                 word.set(itr.nextToken());
                 context.write(word, one);
             }
+
+            //test
+            String[] values = value.toString().split(separator);
+            System.out.println(values);
         }
     }
 
@@ -55,17 +70,22 @@ public class TopkCommonWords {
     }
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
+        Path stopPath = new Path(args[2]);
+        conf.set("stopwords.path", stopPath);
         conf.set("Separator.common", "//s");
         //\s\t\n\r\f
         Job job = Job.getInstance(conf, "Top k Common Words");
         job.setJarByClass(TopkCommonWords.class);
-        job.setMapperClass(TokenizerMapper.class);
         job.setCombinerClass(IntSumReducer.class);
         job.setReducerClass(IntSumReducer.class);
+        job.setMapOutputKeyClass(Text.class);
+        job.setMapOutputValueClass(IntWritable.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
-        FileInputFormat.addInputPath(job, new Path(args[0]));
-        FileOutputFormat.setOutputPath(job, new Path(args[1]));
+        MultipleInputs.addInputPath(job,new Path(args[0]), TextInputFormat.class, TokenizerMapper.class);
+        MultipleInputs.addInputPath(job,new Path(args[1]), TextInputFormat.class, TokenizerMapper.class);
+        //MultipleInputs.addInputPath(job,new Path(args[1]), TextInputFormat.class, TokenizerMapper2.class);
+        FileOutputFormat.setOutputPath(job, new Path(args[3]));
         System.exit(job.waitForCompletion(true) ? 0 : 1);
     }
 }
