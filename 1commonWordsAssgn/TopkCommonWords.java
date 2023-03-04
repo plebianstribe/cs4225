@@ -106,52 +106,55 @@ public class TopkCommonWords {
             extends Mapper<Object, Text, IntWritable, Text>{
         private IntWritable count = new IntWritable();
         private Text word = new Text();
+        private TreeMap<Integer, ArrayList<String>> tmap;
+        private Integer kMap = 0;
 
+        public void setup(Configuration conf) {
+            tmap = new TreeMap<Integer, ArrayList<String>>(Collections.reverseOrder());
+            kMap = conf.get("k");
+        }
         public void map(Object key, Text value, Context context
         ) throws IOException, InterruptedException {
             String[] values = value.toString().split("\\R");
-            String valueOut = values[0];
-            Integer keyOut = Integer.parseInt(values[1]);
+            //String valueOut = values[0];
+            //Integer keyOut = Integer.parseInt(values[1]);
 
             for (String str : values) {
                 String[] smol = str.split("\\t");
                 count.set(Integer.parseInt(smol[1]));
-                word.set(smol[0]);
-                context.write(count, word);
+                //word.set(smol[0]);
+                //context.write(count, word);
+                if (tmap.containsKey(count.get())){
+                    ArrayList<String> as = tmap.getValue();
+                }
+                else {
+                    ArrayList<String> as = new ArrayList<String>();
+                }
+                as.add(value.toString());
+                tmap.put(count.get(), as);
+                if (tmap.size() > kMap) {
+                    tmap.remove(tmap.lastKey());
+                }
             }
-        }
-    }
-
-    public static class SortCombine
-            extends Reducer<IntWritable,Text,Text,IntWritable> {
-        private IntWritable result = new IntWritable();
-        private TreeMap<String, Integer> tmap;
-
-        public void setup(Configuration conf) {
-            tmap = new TreeMap<String, Integer>();
-        }
-        public void reduce(IntWritable key, Text value,
-                           Context context
-        ) throws IOException, InterruptedException {
-            tmap.put(value.toString(), key.get());
-
-            if (tmap.size() > 10) {
-                tmap.remove(tmap.firstKey());
-            }
-
         }
         public void submit(Context context)
                 throws IOException, InterruptedException
         {
-            for (Map.Entry<String, Integer> entry :
+            Integer countdown = kMap;
+            for (Map.Entry<Integer, ArrayList<String>> entry :
                     tmap.entrySet()) {
-                word.set(entry.getKey());
-                count.set(entry.getValue());
-                context.write(count, word);
+                count.set(entry.getKey());
+                ArrayList<String> asSort = entry.getValue();
+                Collections.sort(asSort);
+                for(String str: asSort){
+                    if(countdown>0) {
+                        context.write(str, count);
+                        countdown -= 1;
+                    }
+                }
             }
         }
     }
-
 
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
@@ -170,7 +173,6 @@ public class TopkCommonWords {
             e.printStackTrace();
         }
 
-
         conf.set("Separator.stopwords", data);
         conf.set("Separator.common", "\\s+");
 
@@ -186,23 +188,18 @@ public class TopkCommonWords {
         MultipleInputs.addInputPath(job,new Path(args[0]), TextInputFormat.class, TokenizerMapper.class);
         MultipleInputs.addInputPath(job,new Path(args[1]), TextInputFormat.class, TokenizerMapper.class);
         //MultipleInputs.addInputPath(job,new Path(args[1]), TextInputFormat.class, TokenizerMapper2.class);
-        //FileOutputFormat.setOutputPath(job, interDirPath);
-        FileOutputFormat.setOutputPath(job, new Path(args[3]));
+        FileOutputFormat.setOutputPath(job, interDirPath);
+        //FileOutputFormat.setOutputPath(job, new Path(args[3]));
 
-    /*
         job.waitForCompletion(true);
-
         Configuration conf2 = new Configuration();
         conf2.setInt("k", new Int(args[4]));
         Job job2 = Job.getInstance(conf2, "Sorting");
         job2.setJarByClass(TopkCommonWords.class);
         job2.setMapperClass(SortMap.class);
-        job2.setMaxInputSplitSize(job2, Files.size()
-        job2.setCombinerClass(SortCombine.class);
-        job.setReducerClass(SortReduce.class);
-
-        job2.setMapOutputKeyClass(IntWritable.class);
-        job2.setMapOutputValueClass(Text.class);
+        job2.setMapOutputKeyClass(Text.class);
+        job2.setMapOutputValueClass(IntWritable.class);
+        job2.setNumReduceTasks(0);
         job2.setOutputKeyClass(Text.class);
         job2.setOutputValueClass(IntWritable.class);
         FileInputFormat.addInputPath(job2, interDirPath);
@@ -211,7 +208,7 @@ public class TopkCommonWords {
         boolean hasCompleted = job2.waitForCompletion(true);
         fs.delete(interDirPath, true); // ONLY call this after your last job has completed to delete your intermediate directory
         System.exit(hasCompleted ? 0 : 1); // there should be NO MORE code below this line
-     */
-        System.exit(job.waitForCompletion(true) ? 0 : 1);
+
+        //System.exit(job.waitForCompletion(true) ? 0 : 1);
     }
 }
