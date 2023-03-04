@@ -98,16 +98,11 @@ public class TopkCommonWords {
         }
     }
 
+    /*
     public static class SortMap
             extends Mapper<Object, Text, IntWritable, Text>{
         private IntWritable count = new IntWritable();
         private Text word = new Text();
-
-        private TreeMap<Integer, String> tmap;
-
-        public void setup(Configuration conf) {
-            tmap = new TreeMap<Integer, String>();
-        }
 
         public void map(Object key, Text value, Context context
         ) throws IOException, InterruptedException {
@@ -117,54 +112,43 @@ public class TopkCommonWords {
 
             for (String str : values) {
                 String[] smol = str.split("\\t");
-                tmap.put(Integer.parseInt(smol[1]), smol[0]);
-                if (tmap.size() > 10) {
-                    tmap.remove(tmap.firstKey());
-                }
+                count.set(Integer.parseInt(smol[1]));
+                word.set(smol[0]);
+                context.write(count, word);
             }
+        }
+    }
+
+    public static class SortCombine
+            extends Reducer<IntWritable,Text,Text,IntWritable> {
+        private IntWritable result = new IntWritable();
+        private TreeMap<String, Integer> tmap;
+
+        public void setup(Configuration conf) {
+            tmap = new TreeMap<String, Integer>();
+        }
+        public void reduce(IntWritable key, Text value,
+                           Context context
+        ) throws IOException, InterruptedException {
+            tmap.put(value.toString(), key.get());
+              /*
+            if (tmap.size() > 10) {
+                tmap.remove(tmap.firstKey());
+            }
+
         }
         public void submit(Context context)
                 throws IOException, InterruptedException
         {
-            for (Map.Entry<Integer, String> entry :
+            for (Map.Entry<String, Integer> entry :
                     tmap.entrySet()) {
-
-                count.set(entry.getKey());
-                word.set(entry.getValue());
-
-                context.write(name, count);
+                word.set(entry.getKey());
+                count.set(entry.getValue());
+                context.write(count, word);
             }
         }
     }
-
-    public static class SortReduce
-            extends Reducer<IntWritable,Text,Text,IntWritable> {
-        private IntWritable result = new IntWritable();
-
-        public void reduce(Iterable<IntWritable> key, Text values,
-                           Context context
-        ) throws IOException, InterruptedException {
-            int sum = -1;
-
-            //input values should be Iterable Int thing, idk what is iterable but it should be "Hello":{5, 2}
-
-            //For each item in the input, check if have {a, b}.
-            //Case 1: have {a, b}. Then have to sum to {sum(a), sum(b), and write 1 value which is max(sum(a), sum(b))
-            //Case 2: have only one value. then just sum that value and return
-            for (IntWritable val : values) {
-                int valI = val.get();
-                if(sum == -1){
-                    sum = valI;
-                }
-                else if(valI<sum){
-                    sum = valI;
-                }
-
-            }
-            result.set(sum);
-            context.write(key, result);
-        }
-    }
+    */
 
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
@@ -203,8 +187,10 @@ public class TopkCommonWords {
         conf2.setInt("k", new Int(args[4]));
         Job job2 = Job.getInstance(conf2, "Sorting");
         job2.setJarByClass(TopkCommonWords.class);
-        job2.setMapperClass(SortMap.class)
-        job2.setReducerClass(SortReduce.class);
+        job2.setMapperClass(SortMap.class);
+        job2.setCombinerClass(SortCombine.class);
+        job.setReducerClass(SortReduce.class);
+        job2.setNumReduceTasks(1)
         job2.setMapOutputKeyClass(IntWritable.class);
         job2.setMapOutputValueClass(Text.class);
         job2.setOutputKeyClass(Text.class);
