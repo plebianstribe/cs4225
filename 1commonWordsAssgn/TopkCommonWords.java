@@ -55,7 +55,8 @@ public class TopkCommonWords {
     }
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
-        conf.set("Separator.common", "\s\t\n\r\f");
+        conf.set("Separator.common", "//s");
+        //\s\t\n\r\f
         Job job = Job.getInstance(conf, "Top k Common Words");
         job.setJarByClass(TopkCommonWords.class);
         job.setMapperClass(TokenizerMapper.class);
