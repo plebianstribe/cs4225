@@ -3,10 +3,7 @@ ENTER YOUR NAME HERE
 NAME: Nicholas Tan Kian Boon
 MATRICULATION NUMBER: A0223939W
 */
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Stream;
@@ -148,7 +145,8 @@ public class TopkCommonWords {
                 Collections.sort(asSort);
                 for(String str: asSort){
                     if(countdown>0) {
-                        context.write(str, count);
+                        word.set(str);
+                        context.write(word, count);
                         countdown -= 1;
                     }
                 }
