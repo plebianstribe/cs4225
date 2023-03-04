@@ -7,7 +7,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileSystem;
+import java.nio.file.Files;
 import java.util.*;
+import java.util.stream.Stream;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -94,6 +96,7 @@ public class TopkCommonWords {
 
             }
             result.set(sum);
+            System.out.println(key + result.toString());
             context.write(key, result);
         }
     }
@@ -157,10 +160,16 @@ public class TopkCommonWords {
         Path interDirPath = new Path("/home/course/cs4225/cs4225_assign/temp/assign1_inter/A0223939W"); // REPLACE THIS WITH YOUR OWN ID!
         */
         Path stopPath = new Path(args[2]);
-        InputStream is = new FileInputStream(args[2]);
-        byte[] array = new byte[100];
-        is.read(array);
-        String data = new String(array);
+        String data = new String();
+        try (Stream<String> lines = Files.lines(stopPath))
+        {
+            lines.forEach(s -> data.concat(s+" "));
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
 
         conf.set("Separator.stopwords", data);
         conf.set("Separator.common", "\\s+");
