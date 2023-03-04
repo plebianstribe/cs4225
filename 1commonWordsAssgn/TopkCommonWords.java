@@ -156,10 +156,14 @@ public class TopkCommonWords {
 
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
+        FileSystem fs = FileSystem.get(new Configuration());
+        /*
         private FileSystem createFs() throws IOException {
             fs = FileSystem.get(new Configuration());
             return fs;
         }
+
+         */
         Path interDirPath = new Path("/home/course/cs4225/cs4225_assign/temp/assign1_inter/A0223939W"); // REPLACE THIS WITH YOUR OWN ID!
 
         java.nio.file.Path stopPath = java.nio.file.Path.of(args[2]);
