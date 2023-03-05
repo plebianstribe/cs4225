@@ -123,14 +123,15 @@ public class TopkCommonWords {
                 //word.set(smol[0]);
                 //context.write(count, word);
                 ArrayList<String> as = new ArrayList<String>();
-                if (tmap.containsKey(count.get())){
-                    as = tmap.get(count.get());
+                int valGet = count.get();
+                if (tmap.containsKey(valGet)){
+                    as = tmap.get(valGet);
                 }
                 else {
                     as = new ArrayList<String>();
                 }
                 as.add(value.toString());
-                tmap.put(count.get(), as);
+                tmap.put(valGet, as);
                 if (tmap.size() > kMap) {
                     tmap.remove(tmap.lastKey());
                 }
