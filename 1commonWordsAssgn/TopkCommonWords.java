@@ -235,15 +235,17 @@ public class TopkCommonWords {
         //\s\t\n\r\f
         Job job = Job.getInstance(conf, "Top k Common Words");
         job.setJarByClass(TopkCommonWords.class);
-        job.setMapperClass(MapperOne.class);
-        MultipleInputs.addInputPath(job,new Path(args[0]), TextInputFormat.class, MapperOne.class);
-        MultipleInputs.addInputPath(job,new Path(args[1]), TextInputFormat.class, MapperTwo.class);
-        job.setCombinerClass(IntCountAll.class);
+        setMapOutputKeyClass(Text.class);
+        setMapOutputValueClass(IntWritable.class);job.setCombinerClass(IntCountAll.class);
         job.setReducerClass(IntCountAll.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
         //FileOutputFormat.setOutputPath(job, interDirPath);
         FileOutputFormat.setOutputPath(job, new Path(args[3]));
+
+        MultipleInputs.addInputPath(job,new Path(args[0]), TextInputFormat.class, MapperOne.class);
+        MultipleInputs.addInputPath(job,new Path(args[1]), TextInputFormat.class, MapperTwo.class);
+
         //job.waitForCompletion(true);
 /*
         Configuration conf2 = new Configuration();
