@@ -22,7 +22,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 public class TopkCommonWords {
-    public static class TokenizerMapper1
+    public static class MapperOne
             extends Mapper<Object, Text, Text, IntWritable>{
 
         private final static IntWritable one = new IntWritable(1);
@@ -70,7 +70,7 @@ public class TopkCommonWords {
         }
     }
 
-    public static class TokenizerMapper2
+    public static class MapperTwo
             extends Mapper<Object, Text, Text, IntWritable>{
 
         private final static IntWritable two = new IntWritable(2);
@@ -144,7 +144,7 @@ public class TopkCommonWords {
             context.write(key, result);
         }
     }
-
+/*
     public static class SortMap
             extends Mapper<Object, Text, Text, IntWritable>{
         private IntWritable count = new IntWritable();
@@ -226,7 +226,7 @@ public class TopkCommonWords {
             }
         }
     }
-
+*/
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
         FileSystem fs = FileSystem.get(conf);
@@ -250,12 +250,12 @@ public class TopkCommonWords {
         //\s\t\n\r\f
         Job job = Job.getInstance(conf, "Top k Common Words");
         job.setJarByClass(TopkCommonWords.class);
+        MultipleInputs.addInputPath(job,new Path(args[0]), TextInputFormat.class, MapperOne.class);
+        MultipleInputs.addInputPath(job,new Path(args[1]), TextInputFormat.class, MapperTwo.class);
         job.setCombinerClass(IntCountAll.class);
         job.setReducerClass(IntCountAll.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
-        MultipleInputs.addInputPath(job,new Path(args[0]), TextInputFormat.class, TokenizerMapper1.class);
-        MultipleInputs.addInputPath(job,new Path(args[1]), TextInputFormat.class, TokenizerMapper2.class);
         //MultipleInputs.addInputPath(job,new Path(args[1]), TextInputFormat.class, TokenizerMapper2.class);
         //FileOutputFormat.setOutputPath(job, interDirPath);
         FileOutputFormat.setOutputPath(job, new Path(args[3]));
