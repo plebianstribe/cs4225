@@ -42,16 +42,6 @@ public class TopkCommonWords {
 
         public void map(Object key, Text value, Context context
         ) throws IOException, InterruptedException {
-            /*
-            //splits value which is input to individual tokens
-            StringTokenizer itr = new StringTokenizer(value.toString());
-
-            //iterates through each token to add the word and its count to context (which is a dict?)
-            while (itr.hasMoreTokens()) {
-                word.set(itr.nextToken());
-                context.write(word, one);
-            }
-            */
 
             //Makes an array of individual words split by separators give
             //Runs through array and writes output for each entry IF it does not appear in stopwords AND longer than 4 characters
@@ -145,7 +135,7 @@ public class TopkCommonWords {
                 ArrayList<String> asSort = entry.getValue();
                 Collections.sort(asSort);
                 String res = String.join(",", asSort);
-                for(String res: asSort){
+                for(String omg: asSort){
                     if(countdown>0) {
                         word.set(res);
                         context.write(word, count);
@@ -166,7 +156,7 @@ public class TopkCommonWords {
         public void reduce(Text key, Iterable<IntWritable> values,
                            Context context
         ) throws IOException, InterruptedException {
-            count.set(Integer.parseInt(smol[1]));
+            count.set(values);
             String[] smol = key.toString().split(",");
             for (String str : smol) {
                 word.set(str);
