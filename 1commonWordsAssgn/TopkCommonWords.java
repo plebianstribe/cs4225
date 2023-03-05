@@ -23,8 +23,8 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 public class TopkCommonWords {
     public static class TokenizerMapper1
-            extends Mapper<Object, Text, Text, Text>{
-        private Text count = new Text();
+            extends Mapper<Object, Text, Text, IntWritable>{
+        private IntWritable result = new IntWritable(1);
         private Text word = new Text();
         private String separator = new String();
         private String stopwords = new String();
@@ -51,9 +51,8 @@ public class TopkCommonWords {
             for (String str : values) {
                 if (str.length() > 4) {
                     if (!stopList.contains(str)) {
-                        count.set("File1");
                         word.set(str);
-                        context.write(word, count);
+                        context.write(word, result);
                     }
                 }
             }
@@ -61,8 +60,8 @@ public class TopkCommonWords {
     }
 
     public static class TokenizerMapper2
-            extends Mapper<Object, Text, Text, Text>{
-        private Text count = new Text();
+            extends Mapper<Object, Text, Text, IntWritable>{
+        private IntWritable result = new IntWritable(2);
         private Text word = new Text();
         private String separator = new String();
         private String stopwords = new String();
@@ -90,8 +89,7 @@ public class TopkCommonWords {
                 if (str.length() > 4) {
                     if (!stopList.contains(str)) {
                         word.set(str);
-                        count.set("File2");
-                        context.write(word, count);
+                        context.write(word, result);
                     }
                 }
             }
@@ -99,19 +97,17 @@ public class TopkCommonWords {
     }
 
     public static class IntCountAll
-            extends Reducer<Text,Text,Text,IntWritable> {
+            extends Reducer<Text,IntWritable,Text,IntWritable> {
         private IntWritable result = new IntWritable();
 
-        public void reduce(Text key, Text values,
+        public void reduce(Text key, Iterable<IntWritable> values,
                            Context context
         ) throws IOException, InterruptedException {
             int sumA = 0;
             int sumB = 0;
-
-            String[] vals = values.toString().split("\\s+");
-
-            for(String eachVal: vals) {
-                if (eachVal == "File1") {
+            for (IntWritable val : values) {
+                int eachVal = val.get();
+                if (eachVal == 1) {
                     sumA += 1;
                 } else {
                     sumB += 1;
@@ -235,7 +231,7 @@ public class TopkCommonWords {
         job.setCombinerClass(IntCountAll.class);
         job.setReducerClass(IntCountAll.class);
         job.setMapOutputKeyClass(Text.class);
-        job.setMapOutputValueClass(Text.class);
+        job.setMapOutputValueClass(IntWritable.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
         MultipleInputs.addInputPath(job,new Path(args[0]), TextInputFormat.class, TokenizerMapper1.class);
