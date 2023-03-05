@@ -215,7 +215,7 @@ public class TopkCommonWords {
         Job job2 = Job.getInstance(conf2, "Sorting");
         job2.setJarByClass(TopkCommonWords.class);
         job2.setMapperClass(SortMap.class);
-        job.setReducerClass(SortReduce.class);
+        job2.setReducerClass(SortReduce.class);
         job2.setMapOutputKeyClass(Text.class);
         job2.setMapOutputValueClass(IntWritable.class);
         job2.setNumReduceTasks(1);
