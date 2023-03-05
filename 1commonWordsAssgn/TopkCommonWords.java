@@ -107,7 +107,7 @@ public class TopkCommonWords {
                 if (str.length() > 4) {
                     if (!stopList.contains(str)) {
                         word.set(str);
-                        context.write(word, one);
+                        context.write(word, two);
                     }
                 }
             }
