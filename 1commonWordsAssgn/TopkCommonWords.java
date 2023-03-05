@@ -32,11 +32,7 @@ public class TopkCommonWords {
         private String stopwords = new String();
 
         public void setup(Configuration conf) {
-            /*InputStream is = FileSystem.get(conf).open(new Path(conf.get("stopwords.path")));
 
-            System.out.println(is);
-            System.out.println(is.getClass());
-            */
 
             stopwords = conf.get("Separator.stopwords");
             separator = conf.get("Separator.common");
