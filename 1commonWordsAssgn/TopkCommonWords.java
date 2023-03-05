@@ -22,10 +22,47 @@ import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 public class TopkCommonWords {
-    public static class TokenizerMapper
-            extends Mapper<Object, Text, Text, IntWritable>{
-        private final static IntWritable one = new IntWritable(1);
-        private final static IntWritable zero = new IntWritable(0);
+    public static class TokenizerMapper1
+            extends Mapper<Object, Text, Text, Text>{
+        private Text count = new Text();
+        private Text word = new Text();
+        private String separator = new String();
+        private String stopwords = new String();
+
+        public void setup(Configuration conf) {
+            /*InputStream is = FileSystem.get(conf).open(new Path(conf.get("stopwords.path")));
+
+            System.out.println(is);
+            System.out.println(is.getClass());
+            */
+
+            stopwords = conf.get("Separator.stopwords");
+            separator = conf.get("Separator.common");
+        }
+
+        public void map(Object key, Text value, Context context
+        ) throws IOException, InterruptedException {
+
+            //Makes an array of individual words split by separators give
+            //Runs through array and writes output for each entry IF it does not appear in stopwords AND longer than 4 characters
+            String[] values = value.toString().split(separator);
+            String[] stopArray = stopwords.split("\\s+");
+            List<String> stopList = new ArrayList<>(Arrays.asList(stopArray));
+            for (String str : values) {
+                if (str.length() > 4) {
+                    if (!stopList.contains(str)) {
+                        count.set("File1");
+                        word.set(str);
+                        context.write(word, count);
+                    }
+                }
+            }
+        }
+    }
+
+    public static class TokenizerMapper2
+            extends Mapper<Object, Text, Text, Text>{
+        private Text count = new Text();
         private Text word = new Text();
         private String separator = new String();
         private String stopwords = new String();
@@ -53,43 +90,32 @@ public class TopkCommonWords {
                 if (str.length() > 4) {
                     if (!stopList.contains(str)) {
                         word.set(str);
-                        context.write(word, one);
-                    }else{
-                        context.write(word, zero);
+                        count.set("File2");
+                        context.write(word, count);
                     }
-                }else{
-                    context.write(word, zero);
                 }
             }
         }
     }
 
     public static class IntCountAll
-            extends Reducer<Text,IntWritable,Text,IntWritable> {
+            extends Reducer<Text,Text,Text,IntWritable> {
         private IntWritable result = new IntWritable();
 
-        public void reduce(Text key, Iterable<IntWritable> values,
+        public void reduce(Text key, Text values,
                            Context context
         ) throws IOException, InterruptedException {
-            int sum = -1;
             int sumA = 0;
             int sumB = 0;
-            boolean isA = true;
 
+            String[] vals = values.toString().split();
 
-            //input values should be Iterable Int thing, idk what is iterable but it should be "Hello":{0, 1}
-
-            //For each item in the input, check if have {a, b}.
-            //Case 1: have {a, b}. Then have to sum to {sum(a), sum(b), and write 1 value which is max(sum(a), sum(b))
-            //Case 2: have only one value. then just sum that value and return
-            for (IntWritable val : values) {
-                int valI = val.get();
-                if(isA){
-                    sumA += valI;
-                }else{
-                    sumB += valI;
+            for(String eachVal: vals) {
+                if (eachVal == "File1") {
+                    sumA += 1;
+                } else {
+                    sumB += 1;
                 }
-                isA = !isA;
             }
             if(sumA > sumB){
                 result.set(sumB);
@@ -209,7 +235,7 @@ public class TopkCommonWords {
         job.setCombinerClass(IntCountAll.class);
         job.setReducerClass(IntCountAll.class);
         job.setMapOutputKeyClass(Text.class);
-        job.setMapOutputValueClass(IntWritable.class);
+        job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
         MultipleInputs.addInputPath(job,new Path(args[0]), TextInputFormat.class, TokenizerMapper.class);
