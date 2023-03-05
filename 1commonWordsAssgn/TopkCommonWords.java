@@ -154,7 +154,8 @@ public class TopkCommonWords {
                 = new TreeMap<>(Collections.reverseOrder());
         private Integer kMap = 1;
 
-        public void setup(Configuration conf) {
+        protected void setup(Context context) {
+            Configuration conf = context.getConfiguration();
             kMap = Integer.parseInt(conf.get("k"));
         }
         public void map(Object key, Text value, Context context
@@ -185,7 +186,7 @@ public class TopkCommonWords {
                 }
             }
         }
-        public void submit(Context context)
+        protected void cleanup(Context context)
                 throws IOException, InterruptedException
         {
             Integer countdown = kMap;
