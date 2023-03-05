@@ -214,9 +214,10 @@ public class TopkCommonWords {
         MultipleInputs.addInputPath(job,new Path(args[0]), TextInputFormat.class, TokenizerMapper.class);
         MultipleInputs.addInputPath(job,new Path(args[1]), TextInputFormat.class, TokenizerMapper.class);
         //MultipleInputs.addInputPath(job,new Path(args[1]), TextInputFormat.class, TokenizerMapper2.class);
-        FileOutputFormat.setOutputPath(job, interDirPath);
-        //FileOutputFormat.setOutputPath(job, new Path(args[3]));
+        //FileOutputFormat.setOutputPath(job, interDirPath);
+        FileOutputFormat.setOutputPath(job, new Path(args[3]));
 
+        /*
         job.waitForCompletion(true);
         Configuration conf2 = new Configuration();
         conf2.setInt("k", Integer.parseInt(args[4]));
@@ -235,7 +236,7 @@ public class TopkCommonWords {
         boolean hasCompleted = job2.waitForCompletion(true);
         fs.delete(interDirPath, true); // ONLY call this after your last job has completed to delete your intermediate directory
         System.exit(hasCompleted ? 0 : 1); // there should be NO MORE code below this line
-
-        //System.exit(job.waitForCompletion(true) ? 0 : 1);
+*/
+        System.exit(job.waitForCompletion(true) ? 0 : 1);
     }
 }
