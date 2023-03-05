@@ -107,14 +107,8 @@ public class TopkCommonWords {
                 if (str.length() > 4) {
                     if (!stopList.contains(str)) {
                         word.set(str);
-                        context.write(word, two);
-                    }else{
-                        two.set(0);
-                        context.write(word, two);
+                        context.write(word, one);
                     }
-                }else{
-                    two.set(0);
-                    context.write(word, two);
                 }
             }
         }
@@ -248,10 +242,10 @@ public class TopkCommonWords {
         job.setReducerClass(IntCountAll.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
-        FileOutputFormat.setOutputPath(job, interDirPath);
-        //FileOutputFormat.setOutputPath(job, new Path(args[3]));
-        job.waitForCompletion(true);
-
+        //FileOutputFormat.setOutputPath(job, interDirPath);
+        FileOutputFormat.setOutputPath(job, new Path(args[3]));
+        //job.waitForCompletion(true);
+/*
         Configuration conf2 = new Configuration();
         conf2.setInt("k", Integer.parseInt(args[4]));
         Job job2 = Job.getInstance(conf2, "Sorting");
@@ -270,6 +264,6 @@ public class TopkCommonWords {
         fs.delete(interDirPath, true); // ONLY call this after your last job has completed to delete your intermediate directory
         System.exit(hasCompleted ? 0 : 1); // there should be NO MORE code below this line
 */
-        //System.exit(job.waitForCompletion(true) ? 0 : 1);
+        System.exit(job.waitForCompletion(true) ? 0 : 1);
     }
 }
