@@ -3,6 +3,10 @@ ENTER YOUR NAME HERE
 NAME: Nicholas Tan Kian Boon
 MATRICULATION NUMBER: A0223939W
 */
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.*;
+import java.util.stream.Stream;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -15,11 +19,6 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.*;
-import java.util.stream.Stream;
 
 public class TopkCommonWords {
     /*
@@ -216,8 +215,7 @@ public class TopkCommonWords {
         //\s\t\n\r\f
         Job job = Job.getInstance(conf, "Top k Common Words");
         job.setJarByClass(TopkCommonWords.class);
-        job.setMapOutputKeyClass(Text.class);
-        job.setMapOutputValueClass(IntWritable.class);
+        job.setMapperClass(MapperTwo.class);
         job.setReducerClass(IntCountAll.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
