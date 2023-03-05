@@ -132,7 +132,7 @@ public class TopkCommonWords {
                 else {
                     as = new ArrayList<String>();
                 }
-                as.add(value.toString());
+                as.add(smol[0]);
                 tmap.put(valGet, as);
                 if (tmap.size() > kMap) {
                     tmap.remove(tmap.lastKey());
