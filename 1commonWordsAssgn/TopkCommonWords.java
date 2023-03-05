@@ -144,6 +144,7 @@ public class TopkCommonWords {
                 count.set(entry.getKey());
                 ArrayList<String> asSort = entry.getValue();
                 Collections.sort(asSort);
+                String str = String.join(",", arr)
                 for(String str: asSort){
                     if(countdown>0) {
                         word.set(str);
@@ -151,6 +152,23 @@ public class TopkCommonWords {
                         countdown -= 1;
                     }
                 }
+            }
+        }
+    }
+
+    public static class IntCountAll
+            extends Reducer<Text,IntWritable,IntWritable,Text> {
+        private IntWritable result = new IntWritable();
+        private Text word = new Text();
+        private TreeMap<Integer, ArrayList<String>> tmap;
+
+        public void reduce(Text key, Iterable<IntWritable> values,
+                           Context context
+        ) throws IOException, InterruptedException {
+            String[] smol = key.get().split(",");
+            for (String str : smol) {
+                word.set(str)
+                context.write(values.get(), word);
             }
         }
     }
@@ -198,9 +216,9 @@ public class TopkCommonWords {
         job2.setMapperClass(SortMap.class);
         job2.setMapOutputKeyClass(Text.class);
         job2.setMapOutputValueClass(IntWritable.class);
-        job2.setNumReduceTasks(0);
-        job2.setOutputKeyClass(Text.class);
-        job2.setOutputValueClass(IntWritable.class);
+        job2.setNumReduceTasks(1);
+        job2.setOutputKeyClass(IntWritable.class);
+        job2.setOutputValueClass(Text.class);
         FileInputFormat.addInputPath(job2, interDirPath);
         FileOutputFormat.setOutputPath(job2, new Path(args[3]));
 
