@@ -40,7 +40,6 @@ public class TopkCommonWords {
 
         public void map(Object key, Text value, Context context
         ) throws IOException, InterruptedException {
-            context.write(value, one);
             //Makes an array of individual words split by separators give
             //Runs through array and writes output for each entry IF it does not appear in stopwords AND longer than 4 characters
             String[] values = value.toString().split("\\s+");
@@ -79,7 +78,7 @@ public class TopkCommonWords {
             String[] stopArray = stopwords.split("\\s+");
             List<String> stopList = new ArrayList<>(Arrays.asList(stopArray));
             for (String str : values) {
-                /*if (str.length() > 4) {
+                if (str.length() > 4) {
                     if (!stopList.contains(str)) {
                         word.set(str);
                         context.write(word, two);
@@ -90,9 +89,9 @@ public class TopkCommonWords {
                 }else{
                     two.set(0);
                     context.write(word,two);
-                }*/
-                word.set(str);
-                context.write(word, two);
+                }
+                //word.set(str);
+                //context.write(word, two);
             }
         }
     }
@@ -104,11 +103,22 @@ public class TopkCommonWords {
         public void reduce(Text key, Iterable<IntWritable> values,
                            Context context
         ) throws IOException, InterruptedException {
-            int sum = 0;
+            int sumA = 0;
+            int sumB = 0;
             for (IntWritable val : values) {
-                sum += val.get();
+                int eachVal = val.get();
+                if (eachVal == 1) {
+                    sumA += 1;
+                } else {
+                    sumB += 1;
+                }
             }
-            result.set(sum);
+            if(sumA > sumB){
+                result.set(sumB);
+            }
+            else{
+                result.set(sumA);
+            }
             context.write(key, result);
         }
     }
