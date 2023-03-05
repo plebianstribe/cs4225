@@ -24,7 +24,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 public class TopkCommonWords {
     public static class TokenizerMapper1
             extends Mapper<Object, Text, Text, IntWritable>{
-        private IntWritable result = new IntWritable(1);
+        private final static IntWritable one = new IntWritable(1);
         private Text word = new Text();
         private String separator = new String();
         private String stopwords = new String();
@@ -42,6 +42,16 @@ public class TopkCommonWords {
 
         public void map(Object key, Text value, Context context
         ) throws IOException, InterruptedException {
+            /*
+            //splits value which is input to individual tokens
+            StringTokenizer itr = new StringTokenizer(value.toString());
+
+            //iterates through each token to add the word and its count to context (which is a dict?)
+            while (itr.hasMoreTokens()) {
+                word.set(itr.nextToken());
+                context.write(word, one);
+            }
+            */
 
             //Makes an array of individual words split by separators give
             //Runs through array and writes output for each entry IF it does not appear in stopwords AND longer than 4 characters
@@ -52,7 +62,7 @@ public class TopkCommonWords {
                 if (str.length() > 4) {
                     if (!stopList.contains(str)) {
                         word.set(str);
-                        context.write(word, result);
+                        context.write(word, one);
                     }
                 }
             }
@@ -61,7 +71,7 @@ public class TopkCommonWords {
 
     public static class TokenizerMapper2
             extends Mapper<Object, Text, Text, IntWritable>{
-        private IntWritable result = new IntWritable(2);
+        private final static IntWritable two = new IntWritable(2);
         private Text word = new Text();
         private String separator = new String();
         private String stopwords = new String();
@@ -79,6 +89,16 @@ public class TopkCommonWords {
 
         public void map(Object key, Text value, Context context
         ) throws IOException, InterruptedException {
+            /*
+            //splits value which is input to individual tokens
+            StringTokenizer itr = new StringTokenizer(value.toString());
+
+            //iterates through each token to add the word and its count to context (which is a dict?)
+            while (itr.hasMoreTokens()) {
+                word.set(itr.nextToken());
+                context.write(word, one);
+            }
+            */
 
             //Makes an array of individual words split by separators give
             //Runs through array and writes output for each entry IF it does not appear in stopwords AND longer than 4 characters
@@ -89,7 +109,7 @@ public class TopkCommonWords {
                 if (str.length() > 4) {
                     if (!stopList.contains(str)) {
                         word.set(str);
-                        context.write(word, result);
+                        context.write(word, two);
                     }
                 }
             }
@@ -228,6 +248,7 @@ public class TopkCommonWords {
         //\s\t\n\r\f
         Job job = Job.getInstance(conf, "Top k Common Words");
         job.setJarByClass(TopkCommonWords.class);
+        job.setCombinerClass(IntCountAll.class);
         job.setReducerClass(IntCountAll.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(IntWritable.class);
