@@ -109,11 +109,11 @@ public class TopkCommonWords {
                         word.set(str);
                         context.write(word, two);
                     }else{
-                        one.set(0);
+                        two.set(0);
                         context.write(word, two);
                     }
                 }else{
-                    one.set(0);
+                    two.set(0);
                     context.write(word, two);
                 }
             }
