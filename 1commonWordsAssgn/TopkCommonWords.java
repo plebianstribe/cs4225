@@ -28,13 +28,11 @@ public class TopkCommonWords {
 
         private final static IntWritable one = new IntWritable(1);
         private Text word = new Text("OneNotWorking");
-        private String separator = new String();
-        private String stopwords = new String();
+        private String separator;
+        private String stopwords;
 
         public void setup(Configuration conf) {
-
-
-            stopwords = conf.get("Separator.stopwords");
+            stopwords = conf.get("stopwords");
             separator = conf.get("Separator.common");
         }
 
@@ -61,11 +59,11 @@ public class TopkCommonWords {
 
         private IntWritable two = new IntWritable(2);
         private Text word = new Text("mapperNotWorking");
-        private String separator = new String();
-        private String stopwords = new String();
+        private String separator;
+        private String stopwords;
 
         public void setup(Configuration conf) {
-            stopwords = conf.get("Separator.stopwords");
+            stopwords = conf.get("stopwords");
             separator = conf.get("Separator.common");
         }
 
@@ -113,7 +111,7 @@ public class TopkCommonWords {
                     sumB += 1;
                 }
             }
-            if(sumA > sumB){
+            if(sumA > sumB && sumB != 0){
                 result.set(sumB);
             }
             else{
@@ -122,7 +120,7 @@ public class TopkCommonWords {
             context.write(key, result);
         }
     }
-/*
+
     public static class SortMap
             extends Mapper<Object, Text, Text, IntWritable>{
         private IntWritable count = new IntWritable();
@@ -204,7 +202,7 @@ public class TopkCommonWords {
             }
         }
     }
-*/
+
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
         FileSystem fs = FileSystem.get(conf);
@@ -222,7 +220,7 @@ public class TopkCommonWords {
             e.printStackTrace();
         }
 
-        conf.set("Separator.stopwords", data);
+        conf.set("stopwords", data);
         conf.set("Separator.common", "\\s+");
 
         //\s\t\n\r\f
@@ -235,13 +233,13 @@ public class TopkCommonWords {
         //FileInputFormat.addInputPaths(job, args[0]+","+args[1]);
         MultipleInputs.addInputPath(job,new Path(args[0]), TextInputFormat.class, MapperOne.class);
         MultipleInputs.addInputPath(job,new Path(args[1]), TextInputFormat.class, MapperTwo.class);
-        //FileOutputFormat.setOutputPath(job, interDirPath);
-        FileOutputFormat.setOutputPath(job, new Path(args[3]));
+        FileOutputFormat.setOutputPath(job, interDirPath);
+        //FileOutputFormat.setOutputPath(job, new Path(args[3]));
 
 
 
-        //job.waitForCompletion(true);
-/*
+        job.waitForCompletion(true);
+
         Configuration conf2 = new Configuration();
         conf2.setInt("k", Integer.parseInt(args[4]));
         Job job2 = Job.getInstance(conf2, "Sorting");
@@ -259,7 +257,7 @@ public class TopkCommonWords {
         boolean hasCompleted = job2.waitForCompletion(true);
         fs.delete(interDirPath, true); // ONLY call this after your last job has completed to delete your intermediate directory
         System.exit(hasCompleted ? 0 : 1); // there should be NO MORE code below this line
-*/
-        System.exit(job.waitForCompletion(true) ? 0 : 1);
+
+        //System.exit(job.waitForCompletion(true) ? 0 : 1);
     }
 }
