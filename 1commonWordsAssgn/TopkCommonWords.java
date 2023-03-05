@@ -30,8 +30,7 @@ public class TopkCommonWords {
 
         private final static IntWritable one = new IntWritable(1);
         private Text word = new Text("OneNotWorking");
-        private String separator;
-        private String stopwords;
+        private List<String> stopList = new ArrayList<String>;
 
         protected void setup(Context context) throws IOException, InterruptedException {
             //Configuration conf = context.getConfiguration();
@@ -49,7 +48,7 @@ public class TopkCommonWords {
                     BufferedReader fis = new BufferedReader(new FileReader(patternsFile.toString()));
                     String pattern = null;
                     while ((pattern = fis.readLine()) != null) {
-                        stopwords += pattern+" ";
+                        stopList.add(pattern);
                     }
                 } catch (IOException ioe) {
                     System.err.println("Caught exception while parsing the cached file '" + patternsFile + "' : " + StringUtils.stringifyException(ioe));
@@ -62,8 +61,6 @@ public class TopkCommonWords {
             //Makes an array of individual words split by separators give
             //Runs through array and writes output for each entry IF it does not appear in stopwords AND longer than 4 characters
             String[] values = value.toString().split("\\s+");
-            String[] stopArray = stopwords.split("\\s+");
-            List<String> stopList = new ArrayList<>(Arrays.asList(stopArray));
             for (String str : values) {
                 if (str.length() > 4) {
                     if (!stopList.contains(str)) {
@@ -80,8 +77,7 @@ public class TopkCommonWords {
 
         private IntWritable two = new IntWritable(2);
         private Text word = new Text("mapperNotWorking");
-        private String separator;
-        private String stopwords;
+        private List<String> stopList = new ArrayList<String>;
 
         protected void setup(Context context) throws IOException, InterruptedException {
             //Configuration conf = context.getConfiguration();
@@ -99,7 +95,7 @@ public class TopkCommonWords {
                     BufferedReader fis = new BufferedReader(new FileReader(patternsFile.toString()));
                     String pattern = null;
                     while ((pattern = fis.readLine()) != null) {
-                        stopwords += pattern+" ";
+                        stopList.add(pattern);
                     }
                 } catch (IOException ioe) {
                     System.err.println("Caught exception while parsing the cached file '" + patternsFile + "' : " + StringUtils.stringifyException(ioe));
@@ -109,27 +105,16 @@ public class TopkCommonWords {
 
         public void map(Object key, Text value, Context context
         ) throws IOException, InterruptedException {
-
             //Makes an array of individual words split by separators give
             //Runs through array and writes output for each entry IF it does not appear in stopwords AND longer than 4 characters
             String[] values = value.toString().split("\\s+");
-            String[] stopArray = stopwords.split("\\s+");
-            List<String> stopList = new ArrayList<>(Arrays.asList(stopArray));
             for (String str : values) {
                 if (str.length() > 4) {
                     if (!stopList.contains(str)) {
                         word.set(str);
                         context.write(word, two);
-                    }else{
-                        two.set(0);
-                        context.write(word,two);
                     }
-                }else{
-                    two.set(0);
-                    context.write(word,two);
                 }
-                //word.set(str);
-                //context.write(word, two);
             }
         }
     }
