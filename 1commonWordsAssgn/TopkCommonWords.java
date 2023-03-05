@@ -104,11 +104,11 @@ public class TopkCommonWords {
             extends Mapper<Object, Text, Text, IntWritable>{
         private IntWritable count = new IntWritable();
         private Text word = new Text();
-        private TreeMap<Integer, ArrayList<String>> tmap;
+        private TreeMap<Integer, ArrayList<String>> tmap
+                = new TreeMap<>(Collections.reverseOrder());
         private Integer kMap = 1;
 
         public void setup(Configuration conf) {
-            tmap = new TreeMap<Integer, ArrayList<String>>(Collections.reverseOrder());
             kMap = Integer.parseInt(conf.get("k"));
         }
         public void map(Object key, Text value, Context context
