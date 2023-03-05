@@ -252,6 +252,7 @@ public class TopkCommonWords {
         //\s\t\n\r\f
         Job job = Job.getInstance(conf, "Top k Common Words");
         job.setJarByClass(TopkCommonWords.class);
+        job.setMapperClass(MapperOne.class);
         MultipleInputs.addInputPath(job,new Path(args[0]), TextInputFormat.class, MapperOne.class);
         MultipleInputs.addInputPath(job,new Path(args[1]), TextInputFormat.class, MapperTwo.class);
         job.setCombinerClass(IntCountAll.class);
