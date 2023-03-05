@@ -55,10 +55,10 @@ public class TopkCommonWords {
                         word.set(str);
                         context.write(word, one);
                     }else{
-                        context.write(word, zero)
+                        context.write(word, zero);
                     }
                 }else{
-                    context.write(word, zero)
+                    context.write(word, zero);
                 }
             }
         }
