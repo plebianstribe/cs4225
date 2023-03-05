@@ -66,7 +66,7 @@ public class TopkCommonWords {
     public static class MapperTwo
             extends Mapper<Object, Text, Text, IntWritable>{
 
-        private final static IntWritable two = new IntWritable(2);
+        private IntWritable two = new IntWritable(2);
         private Text word = new Text("mapperNotWorking");
         private String separator = new String();
         private String stopwords = new String();
@@ -85,12 +85,20 @@ public class TopkCommonWords {
             String[] stopArray = stopwords.split("\\s+");
             List<String> stopList = new ArrayList<>(Arrays.asList(stopArray));
             for (String str : values) {
-                if (str.length() > 4) {
+                /*if (str.length() > 4) {
                     if (!stopList.contains(str)) {
                         word.set(str);
                         context.write(word, two);
+                    }else{
+                        two.set(0);
+                        context.write(word,two);
                     }
-                }
+                }else{
+                    two.set(0);
+                    context.write(word,two);
+                }*/
+                word.set(str);
+                context.write(word, two);
             }
         }
     }
