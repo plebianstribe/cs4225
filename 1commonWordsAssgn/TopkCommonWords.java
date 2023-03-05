@@ -30,7 +30,7 @@ public class TopkCommonWords {
 
         private final static IntWritable one = new IntWritable(1);
         private Text word = new Text("OneNotWorking");
-        private List<String> stopList = new ArrayList<String>;
+        private List<String> stopList = new ArrayList<String>();
 
         protected void setup(Context context) throws IOException, InterruptedException {
             //Configuration conf = context.getConfiguration();
@@ -77,7 +77,7 @@ public class TopkCommonWords {
 
         private IntWritable two = new IntWritable(2);
         private Text word = new Text("mapperNotWorking");
-        private List<String> stopList = new ArrayList<String>;
+        private List<String> stopList = new ArrayList<String>();
 
         protected void setup(Context context) throws IOException, InterruptedException {
             //Configuration conf = context.getConfiguration();
@@ -170,11 +170,6 @@ public class TopkCommonWords {
                 //context.write(count, word);
                 ArrayList<String> as;
                 int valGet = count.get();
-                System.out.println(valGet);
-                System.out.println(tmap.isEmpty());
-                System.out.println(tmap.containsKey(valGet));
-                System.out.println(tmap.get(valGet));
-                System.out.println(kMap);
                 if (tmap.isEmpty()){
                     as = new ArrayList<String>();
                 }else if (tmap.containsKey(valGet)){
