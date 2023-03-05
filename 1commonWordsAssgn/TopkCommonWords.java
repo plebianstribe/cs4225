@@ -40,10 +40,10 @@ public class TopkCommonWords {
 
         public void map(Object key, Text value, Context context
         ) throws IOException, InterruptedException {
-
+            context.write(value, one);
             //Makes an array of individual words split by separators give
             //Runs through array and writes output for each entry IF it does not appear in stopwords AND longer than 4 characters
-            String[] values = value.toString().split(separator);
+            String[] values = value.toString().split("\\s+");
             String[] stopArray = stopwords.split("\\s+");
             List<String> stopList = new ArrayList<>(Arrays.asList(stopArray));
             for (String str : values) {
@@ -75,7 +75,7 @@ public class TopkCommonWords {
 
             //Makes an array of individual words split by separators give
             //Runs through array and writes output for each entry IF it does not appear in stopwords AND longer than 4 characters
-            String[] values = value.toString().split(separator);
+            String[] values = value.toString().split("\\s+");
             String[] stopArray = stopwords.split("\\s+");
             List<String> stopList = new ArrayList<>(Arrays.asList(stopArray));
             for (String str : values) {
