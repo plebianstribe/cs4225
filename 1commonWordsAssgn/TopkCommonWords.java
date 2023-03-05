@@ -3,9 +3,7 @@ ENTER YOUR NAME HERE
 NAME: Nicholas Tan Kian Boon
 MATRICULATION NUMBER: A0223939W
 */
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Stream;
@@ -36,6 +34,9 @@ public class TopkCommonWords {
         private String stopwords;
 
         protected void setup(Context context) throws IOException, InterruptedException {
+            //Configuration conf = context.getConfiguration();
+            //stopwords = conf.get("stopwords");
+
             Configuration conf = context.getConfiguration();
             Path[] patternsFiles = new Path[0];
             try {
@@ -44,11 +45,15 @@ public class TopkCommonWords {
                 System.err.println("Caught exception while getting cached files: " + StringUtils.stringifyException(ioe));
             }
             for (Path patternsFile : patternsFiles) {
-                InputStream is = new FileInputStream(patternsFile);
-                byte[] array = new byte[100];
-                is.read(array);
-                String data = new String(array);
-                stopwords = data;
+                try {
+                    BufferedReader fis = new BufferedReader(new FileReader(patternsFile.toString()));
+                    String pattern = null;
+                    while ((pattern = fis.readLine()) != null) {
+                        stopwords += pattern+" "
+                    }
+                } catch (IOException ioe) {
+                    System.err.println("Caught exception while parsing the cached file '" + patternsFile + "' : " + StringUtils.stringifyException(ioe));
+                }
             }
         }
 
@@ -90,11 +95,15 @@ public class TopkCommonWords {
                 System.err.println("Caught exception while getting cached files: " + StringUtils.stringifyException(ioe));
             }
             for (Path patternsFile : patternsFiles) {
-                InputStream is = new FileInputStream(patternsFile);
-                byte[] array = new byte[100];
-                is.read(array);
-                String data = new String(array);
-                stopwords = data;
+                try {
+                    BufferedReader fis = new BufferedReader(new FileReader(patternsFile.toString()));
+                    String pattern = null;
+                    while ((pattern = fis.readLine()) != null) {
+                        stopwords += pattern+" "
+                    }
+                } catch (IOException ioe) {
+                    System.err.println("Caught exception while parsing the cached file '" + patternsFile + "' : " + StringUtils.stringifyException(ioe));
+                }
             }
         }
 
