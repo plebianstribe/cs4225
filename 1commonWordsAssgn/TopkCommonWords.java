@@ -160,15 +160,17 @@ public class TopkCommonWords {
             extends Reducer<Text,IntWritable,IntWritable,Text> {
         private IntWritable result = new IntWritable();
         private Text word = new Text();
+        private IntWritable count = new IntWritable();
         private TreeMap<Integer, ArrayList<String>> tmap;
 
         public void reduce(Text key, Iterable<IntWritable> values,
                            Context context
         ) throws IOException, InterruptedException {
+            count.set(Integer.parseInt(smol[1]));
             String[] smol = key.toString().split(",");
             for (String str : smol) {
                 word.set(str);
-                context.write(values.get(), word);
+                context.write(count, word);
             }
         }
     }
