@@ -3,29 +3,30 @@ ENTER YOUR NAME HERE
 NAME: Nicholas Tan Kian Boon
 MATRICULATION NUMBER: A0223939W
 */
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.*;
-import java.util.stream.Stream;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.*;
+import java.util.stream.Stream;
 
 public class TopkCommonWords {
     public static class TokenizerMapper1
             extends Mapper<Object, Text, Text, IntWritable>{
+
         private final static IntWritable one = new IntWritable(1);
-        private Text word = new Text();
+        private Text word = new Text("OneNotWorking");
         private String separator = new String();
         private String stopwords = new String();
 
@@ -71,8 +72,9 @@ public class TopkCommonWords {
 
     public static class TokenizerMapper2
             extends Mapper<Object, Text, Text, IntWritable>{
+
         private final static IntWritable two = new IntWritable(2);
-        private Text word = new Text();
+        private Text word = new Text("mapperNotWorking");
         private String separator = new String();
         private String stopwords = new String();
 
@@ -250,8 +252,6 @@ public class TopkCommonWords {
         job.setJarByClass(TopkCommonWords.class);
         job.setCombinerClass(IntCountAll.class);
         job.setReducerClass(IntCountAll.class);
-        job.setMapOutputKeyClass(Text.class);
-        job.setMapOutputValueClass(IntWritable.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
         MultipleInputs.addInputPath(job,new Path(args[0]), TextInputFormat.class, TokenizerMapper1.class);
@@ -259,9 +259,10 @@ public class TopkCommonWords {
         //MultipleInputs.addInputPath(job,new Path(args[1]), TextInputFormat.class, TokenizerMapper2.class);
         //FileOutputFormat.setOutputPath(job, interDirPath);
         FileOutputFormat.setOutputPath(job, new Path(args[3]));
+        //job.waitForCompletion(true);
 
         /*
-        job.waitForCompletion(true);
+
         Configuration conf2 = new Configuration();
         conf2.setInt("k", Integer.parseInt(args[4]));
         Job job2 = Job.getInstance(conf2, "Sorting");
