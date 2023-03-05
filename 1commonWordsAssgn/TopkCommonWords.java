@@ -22,7 +22,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 public class TopkCommonWords {
-    /*
+
     public static class MapperOne
             extends Mapper<Object, Text, Text, IntWritable>{
 
@@ -51,18 +51,12 @@ public class TopkCommonWords {
                     if (!stopList.contains(str)) {
                         word.set(str);
                         context.write(word, one);
-                    }else{
-                        one.set(0);
-                        context.write(word, one);
                     }
-                }else{
-                    one.set(0);
-                    context.write(word, one);
                 }
             }
         }
     }
-*/
+
     public static class MapperTwo
             extends Mapper<Object, Text, Text, IntWritable>{
 
@@ -219,18 +213,18 @@ public class TopkCommonWords {
         }
 
         conf.set("Separator.stopwords", data);
-        conf.set("Separator.common", "\\s+");
+        conf.set("Separator.common", "\\s\\t\\n\\r\\f");
 
         //\s\t\n\r\f
         Job job = Job.getInstance(conf, "Top k Common Words");
         job.setJarByClass(TopkCommonWords.class);
-        job.setMapperClass(MapperTwo.class);
+        //job.setMapperClass(MapperTwo.class);
         job.setReducerClass(IntCountAll.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
-        FileInputFormat.addInputPaths(job, args[0]+","+args[1]);
-        //MultipleInputs.addInputPath(job,new Path(args[0]), TextInputFormat.class, MapperTwo.class);
-        //MultipleInputs.addInputPath(job,new Path(args[1]), TextInputFormat.class, MapperTwo.class);
+        //FileInputFormat.addInputPaths(job, args[0]+","+args[1]);
+        MultipleInputs.addInputPath(job,new Path(args[0]), TextInputFormat.class, MapperOne.class);
+        MultipleInputs.addInputPath(job,new Path(args[1]), TextInputFormat.class, MapperTwo.class);
         //FileOutputFormat.setOutputPath(job, interDirPath);
         FileOutputFormat.setOutputPath(job, new Path(args[3]));
 
