@@ -20,6 +20,8 @@ import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.filecache.DistributedCache;
+import org.apache.hadoop.util.*;
 
 public class TopkCommonWords {
 
@@ -31,9 +33,9 @@ public class TopkCommonWords {
         private String separator;
         private String stopwords;
 
-        public void setup(Configuration conf) {
+        protected void setup(Context context) throws IOException, InterruptedException {
+            Configuration conf = context.getConfiguration();
             stopwords = conf.get("stopwords");
-            separator = conf.get("Separator.common");
         }
 
         public void map(Object key, Text value, Context context
@@ -62,9 +64,9 @@ public class TopkCommonWords {
         private String separator;
         private String stopwords;
 
-        public void setup(Configuration conf) {
+        protected void setup(Context context) throws IOException, InterruptedException {
+            Configuration conf = context.getConfiguration();
             stopwords = conf.get("stopwords");
-            separator = conf.get("Separator.common");
         }
 
         public void map(Object key, Text value, Context context
@@ -205,9 +207,11 @@ public class TopkCommonWords {
 
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
-        FileSystem fs = FileSystem.get(conf);
 
+
+        FileSystem fs = FileSystem.get(conf);
         Path interDirPath = new Path("/home/course/cs4225/cs4225_assign/temp/assign1_inter/A0223939W"); // REPLACE THIS WITH YOUR OWN ID!
+        //DistributedCache.addCacheFile(new Path(args[2]).toUri(), conf);
 
         java.nio.file.Path stopPath = java.nio.file.Path.of(args[2]);
         String data = new String();
@@ -225,6 +229,7 @@ public class TopkCommonWords {
 
         //\s\t\n\r\f
         Job job = Job.getInstance(conf, "Top k Common Words");
+
         job.setJarByClass(TopkCommonWords.class);
         //job.setMapperClass(MapperTwo.class);
         job.setReducerClass(IntCountAll.class);
@@ -235,8 +240,6 @@ public class TopkCommonWords {
         MultipleInputs.addInputPath(job,new Path(args[1]), TextInputFormat.class, MapperTwo.class);
         FileOutputFormat.setOutputPath(job, interDirPath);
         //FileOutputFormat.setOutputPath(job, new Path(args[3]));
-
-
 
         job.waitForCompletion(true);
 
