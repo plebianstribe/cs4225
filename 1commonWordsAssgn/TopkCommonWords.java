@@ -89,6 +89,7 @@ public class TopkCommonWords {
                 }else{
                     sumB += valI;
                 }
+                isA = !isA;
             }
             if(sumA > sumB){
                 result.set(sumB);
