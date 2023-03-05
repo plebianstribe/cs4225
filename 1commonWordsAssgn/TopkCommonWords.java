@@ -144,7 +144,7 @@ public class TopkCommonWords {
                 count.set(entry.getKey());
                 ArrayList<String> asSort = entry.getValue();
                 Collections.sort(asSort);
-                String str = String.join(",", arr)
+                String str = String.join(",", arr);
                 for(String str: asSort){
                     if(countdown>0) {
                         word.set(str);
@@ -167,7 +167,7 @@ public class TopkCommonWords {
         ) throws IOException, InterruptedException {
             String[] smol = key.get().split(",");
             for (String str : smol) {
-                word.set(str)
+                word.set(str);
                 context.write(values.get(), word);
             }
         }
