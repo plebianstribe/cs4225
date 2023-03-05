@@ -213,7 +213,7 @@ public class TopkCommonWords {
         }
 
         conf.set("Separator.stopwords", data);
-        conf.set("Separator.common", " ");
+        conf.set("Separator.common", "\\s+");
 
         //\s\t\n\r\f
         Job job = Job.getInstance(conf, "Top k Common Words");
