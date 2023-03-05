@@ -22,6 +22,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 public class TopkCommonWords {
+    /*
     public static class MapperOne
             extends Mapper<Object, Text, Text, IntWritable>{
 
@@ -43,16 +44,6 @@ public class TopkCommonWords {
 
         public void map(Object key, Text value, Context context
         ) throws IOException, InterruptedException {
-            /*
-            //splits value which is input to individual tokens
-            StringTokenizer itr = new StringTokenizer(value.toString());
-
-            //iterates through each token to add the word and its count to context (which is a dict?)
-            while (itr.hasMoreTokens()) {
-                word.set(itr.nextToken());
-                context.write(word, one);
-            }
-            */
 
             //Makes an array of individual words split by separators give
             //Runs through array and writes output for each entry IF it does not appear in stopwords AND longer than 4 characters
@@ -75,7 +66,7 @@ public class TopkCommonWords {
             }
         }
     }
-
+*/
     public static class MapperTwo
             extends Mapper<Object, Text, Text, IntWritable>{
 
@@ -85,12 +76,6 @@ public class TopkCommonWords {
         private String stopwords = new String();
 
         public void setup(Configuration conf) {
-            /*InputStream is = FileSystem.get(conf).open(new Path(conf.get("stopwords.path")));
-
-            System.out.println(is);
-            System.out.println(is.getClass());
-            */
-
             stopwords = conf.get("Separator.stopwords");
             separator = conf.get("Separator.common");
         }
@@ -236,15 +221,16 @@ public class TopkCommonWords {
         Job job = Job.getInstance(conf, "Top k Common Words");
         job.setJarByClass(TopkCommonWords.class);
         job.setMapOutputKeyClass(Text.class);
-        job.setMapOutputValueClass(IntWritable.class);job.setCombinerClass(IntCountAll.class);
+        job.setMapOutputValueClass(IntWritable.class);
         job.setReducerClass(IntCountAll.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
+        MultipleInputs.addInputPath(job,new Path(args[0]), TextInputFormat.class, MapperTwo.class);
+        MultipleInputs.addInputPath(job,new Path(args[1]), TextInputFormat.class, MapperTwo.class);
         //FileOutputFormat.setOutputPath(job, interDirPath);
         FileOutputFormat.setOutputPath(job, new Path(args[3]));
 
-        MultipleInputs.addInputPath(job,new Path(args[0]), TextInputFormat.class, MapperOne.class);
-        MultipleInputs.addInputPath(job,new Path(args[1]), TextInputFormat.class, MapperTwo.class);
+
 
         //job.waitForCompletion(true);
 /*
