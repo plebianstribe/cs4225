@@ -105,7 +105,7 @@ public class TopkCommonWords {
         private IntWritable count = new IntWritable();
         private Text word = new Text();
         private TreeMap<Integer, ArrayList<String>> tmap;
-        private Integer kMap = 0;
+        private Integer kMap = 1;
 
         public void setup(Configuration conf) {
             tmap = new TreeMap<Integer, ArrayList<String>>(Collections.reverseOrder());
@@ -122,8 +122,13 @@ public class TopkCommonWords {
                 count.set(Integer.parseInt(smol[1]));
                 //word.set(smol[0]);
                 //context.write(count, word);
-                ArrayList<String> as = new ArrayList<String>();
+                ArrayList<String> as;
                 int valGet = count.get();
+                System.out.println(valGet);
+                System.out.println(tmap.isEmpty());
+                System.out.println(tmap.containsKey(valGet));
+                System.out.println(tmap.get(valGet));
+                System.out.println(kMap);
                 if (tmap.isEmpty()){
                     as = new ArrayList<String>();
                 }else if (tmap.containsKey(valGet)){
