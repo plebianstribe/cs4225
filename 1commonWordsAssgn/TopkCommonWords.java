@@ -49,7 +49,7 @@ public class TopkCommonWords {
                     BufferedReader fis = new BufferedReader(new FileReader(patternsFile.toString()));
                     String pattern = null;
                     while ((pattern = fis.readLine()) != null) {
-                        stopwords += pattern+" "
+                        stopwords += pattern+" ";
                     }
                 } catch (IOException ioe) {
                     System.err.println("Caught exception while parsing the cached file '" + patternsFile + "' : " + StringUtils.stringifyException(ioe));
@@ -99,7 +99,7 @@ public class TopkCommonWords {
                     BufferedReader fis = new BufferedReader(new FileReader(patternsFile.toString()));
                     String pattern = null;
                     while ((pattern = fis.readLine()) != null) {
-                        stopwords += pattern+" "
+                        stopwords += pattern+" ";
                     }
                 } catch (IOException ioe) {
                     System.err.println("Caught exception while parsing the cached file '" + patternsFile + "' : " + StringUtils.stringifyException(ioe));
