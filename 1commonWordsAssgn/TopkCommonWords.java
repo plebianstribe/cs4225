@@ -108,7 +108,7 @@ public class TopkCommonWords {
             int sumA = 0;
             int sumB = 0;
 
-            String[] vals = values.toString().split();
+            String[] vals = values.toString().split("\\s+");
 
             for(String eachVal: vals) {
                 if (eachVal == "File1") {
@@ -238,8 +238,8 @@ public class TopkCommonWords {
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
-        MultipleInputs.addInputPath(job,new Path(args[0]), TextInputFormat.class, TokenizerMapper.class);
-        MultipleInputs.addInputPath(job,new Path(args[1]), TextInputFormat.class, TokenizerMapper.class);
+        MultipleInputs.addInputPath(job,new Path(args[0]), TextInputFormat.class, TokenizerMapper1.class);
+        MultipleInputs.addInputPath(job,new Path(args[1]), TextInputFormat.class, TokenizerMapper2.class);
         //MultipleInputs.addInputPath(job,new Path(args[1]), TextInputFormat.class, TokenizerMapper2.class);
         //FileOutputFormat.setOutputPath(job, interDirPath);
         FileOutputFormat.setOutputPath(job, new Path(args[3]));
