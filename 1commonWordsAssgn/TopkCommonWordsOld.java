@@ -53,6 +53,25 @@ public class TopkCommonWords {
         public void reduce(Text key, Iterable<IntWritable> values,
                            Context context
         ) throws IOException, InterruptedException {
+            /*
+            int sumA = 0;
+            int sumB = 0;
+            for (IntWritable val : values) {
+                int eachVal = val.get();
+                if (eachVal == 1) {
+                    sumA += 1;
+                } else {
+                    sumB += 1;
+                }
+            }
+            if(sumA > sumB){
+                result.set(sumB);
+            }
+            else{
+                result.set(sumA);
+            }
+            context.write(key, result);
+             */
             int sum = 0;
             for (IntWritable val : values) {
                 sum += val.get();
