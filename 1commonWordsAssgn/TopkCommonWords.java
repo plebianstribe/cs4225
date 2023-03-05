@@ -228,7 +228,6 @@ public class TopkCommonWords {
         //\s\t\n\r\f
         Job job = Job.getInstance(conf, "Top k Common Words");
         job.setJarByClass(TopkCommonWords.class);
-        job.setCombinerClass(IntCountAll.class);
         job.setReducerClass(IntCountAll.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(IntWritable.class);
