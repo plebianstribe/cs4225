@@ -144,10 +144,10 @@ public class TopkCommonWords {
                 count.set(entry.getKey());
                 ArrayList<String> asSort = entry.getValue();
                 Collections.sort(asSort);
-                String str = String.join(",", arr);
-                for(String str: asSort){
+                String res = String.join(",", asSort);
+                for(String res: asSort){
                     if(countdown>0) {
-                        word.set(str);
+                        word.set(res);
                         context.write(word, count);
                         countdown -= 1;
                     }
@@ -165,7 +165,7 @@ public class TopkCommonWords {
         public void reduce(Text key, Iterable<IntWritable> values,
                            Context context
         ) throws IOException, InterruptedException {
-            String[] smol = key.get().split(",");
+            String[] smol = key.toString().split(",");
             for (String str : smol) {
                 word.set(str);
                 context.write(values.get(), word);
