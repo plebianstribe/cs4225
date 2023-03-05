@@ -25,6 +25,7 @@ public class TopkCommonWords {
     public static class TokenizerMapper
             extends Mapper<Object, Text, Text, IntWritable>{
         private final static IntWritable one = new IntWritable(1);
+        private final static IntWritable zero = new IntWritable(0);
         private Text word = new Text();
         private String separator = new String();
         private String stopwords = new String();
@@ -53,7 +54,11 @@ public class TopkCommonWords {
                     if (!stopList.contains(str)) {
                         word.set(str);
                         context.write(word, one);
+                    }else{
+                        context.write(word, zero)
                     }
+                }else{
+                    context.write(word, zero)
                 }
             }
         }
@@ -67,24 +72,30 @@ public class TopkCommonWords {
                            Context context
         ) throws IOException, InterruptedException {
             int sum = -1;
+            int sumA = 0;
+            int sumB = 0;
+            boolean isA = true;
 
-            //input values should be Iterable Int thing, idk what is iterable but it should be "Hello":{5, 2}
+
+            //input values should be Iterable Int thing, idk what is iterable but it should be "Hello":{0, 1}
 
             //For each item in the input, check if have {a, b}.
             //Case 1: have {a, b}. Then have to sum to {sum(a), sum(b), and write 1 value which is max(sum(a), sum(b))
             //Case 2: have only one value. then just sum that value and return
             for (IntWritable val : values) {
                 int valI = val.get();
-                if(sum == -1){
-                    sum = valI;
+                if(isA){
+                    sumA += valI;
+                }else{
+                    sumB += valI;
                 }
-                else if(valI<sum){
-                    sum = valI;
-                }
-
             }
-            result.set(sum);
-            System.out.println(key + result.toString());
+            if(sumA > sumB){
+                result.set(sumB);
+            }
+            else{
+                result.set(sumA);
+            }
             context.write(key, result);
         }
     }
@@ -152,7 +163,7 @@ public class TopkCommonWords {
         private Text word = new Text();
         private TreeMap<Integer, ArrayList<String>> tmap;
 
-        public void reduce(Text key, Iterable<IntWritable> values,
+        public void reduce(Text key, IntWritable values,
                            Context context
         ) throws IOException, InterruptedException {
             String[] smol = key.toString().split(",");
