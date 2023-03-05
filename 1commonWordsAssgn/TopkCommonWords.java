@@ -124,7 +124,9 @@ public class TopkCommonWords {
                 //context.write(count, word);
                 ArrayList<String> as = new ArrayList<String>();
                 int valGet = count.get();
-                if (tmap.containsKey(valGet)){
+                if (tmap.isEmpty()){
+                    as = new ArrayList<String>();
+                }else if (tmap.containsKey(valGet)){
                     as = tmap.get(valGet);
                 }
                 else {
