@@ -32,11 +32,9 @@ public class TopkCommonWords {
         private Text word = new Text("OneNotWorking");
         private List<String> stopList = new ArrayList<String>();
 
-        protected void setup(Context context) throws IOException, InterruptedException {
+        protected void setup(JobConf conf) throws IOException, InterruptedException {
             //Configuration conf = context.getConfiguration();
             //stopwords = conf.get("stopwords");
-
-            Configuration conf = context.getConfiguration();
             Path[] patternsFiles = new Path[0];
             try {
                 patternsFiles = DistributedCache.getLocalCacheFiles(conf);
@@ -131,6 +129,7 @@ public class TopkCommonWords {
             int sumA = 0;
             int sumB = 0;
             for (IntWritable val : values) {
+                System.err.println(val.get());
                 int eachVal = val.get();
                 if (eachVal == 1) {
                     sumA += 1;
@@ -140,11 +139,12 @@ public class TopkCommonWords {
             }
             if(sumA > sumB && sumB != 0){
                 result.set(sumB);
+                context.write(key, result);
             }
-            else{
+            else {
                 result.set(sumA);
+                context.write(key, result);
             }
-            context.write(key, result);
         }
     }
 /*
@@ -248,7 +248,9 @@ public class TopkCommonWords {
 
         FileSystem fs = FileSystem.get(conf);
         Path interDirPath = new Path("/home/course/cs4225/cs4225_assign/temp/assign1_inter/A0223939W"); // REPLACE THIS WITH YOUR OWN ID!
-        DistributedCache.addCacheFile(new Path(args[2]).toUri(), conf);
+
+        JobConf fileJob = new JobConf();
+        DistributedCache.addCacheFile(new Path(args[2]).toUri(), fileJob);
 
 
         //conf.set("stopwords", data);
