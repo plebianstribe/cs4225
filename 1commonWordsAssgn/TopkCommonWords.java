@@ -138,7 +138,6 @@ public class TopkCommonWords {
             int sumA = 0;
             int sumB = 0;
             for (IntWritable val : values) {
-                System.err.println(val.get());
                 int eachVal = val.get();
                 if (eachVal == 1) {
                     sumA += 1;
@@ -146,10 +145,6 @@ public class TopkCommonWords {
                     sumB += 1;
                 }
             }
-            System.err.println("a and B are");
-            System.err.println(sumA);
-            System.err.println(sumB);
-            System.err.println("end!");
 
             if(sumA > sumB && sumB != 0){
                 result.set(sumB);
