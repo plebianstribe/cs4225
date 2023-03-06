@@ -313,7 +313,17 @@ public class TopkCommonWords {
             Text t2 = (Text) w2;
             String[] t1Items = t1.toString().split("\\t");
             String[] t2Items = t2.toString().split("\\t");
-            int comp = Integer.parseInt(t2Items[0]).compareTo(Integer.parseInt(t1Items[0]));
+            int t1Int = Integer.parseInt(t1Items[0]);
+            int t2Int = Integer.parseInt(t2Items[0]);
+            int comp;
+            if (t2Int>t1Int){
+                comp = 1;
+            }else if (t1Int>t2Int){
+                comp = -1;
+            }else{
+                comp = 0;
+            }
+            //int comp = Integer.parseInt(t2Items[0]).compareTo(Integer.parseInt(t1Items[0]));
 //ascending Str
             if (comp == 0) {
                 comp = t1Items[1].compareTo(t2Items[1]);
