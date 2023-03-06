@@ -180,7 +180,7 @@ public class TopkCommonWords {
 
             for (String str : values) {
                 System.err.println(str + " HELLO");
-                String[] smol = str.split("\\t+$");
+                String[] smol = str.split("[^\\S\\r\\n]+");
                 count.set(Integer.parseInt(smol[1]));
                 //word.set(smol[0]);
                 //context.write(count, word);
