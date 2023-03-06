@@ -238,8 +238,8 @@ public class TopkCommonWords {
             for(String omg: stringList){
                 if(kMap>0) {
                     word.set(omg);
-                    System.err.println(result.get().toString()+ " Final Count");
-                    System.err.println(word.get()+ " Final Word");
+                    System.err.println(result.get());
+                    System.err.println(omg+ " Final Word");
                     context.write(result, word);
                     kMap -= 1;
                 }
