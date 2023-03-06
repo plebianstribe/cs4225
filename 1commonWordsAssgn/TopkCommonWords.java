@@ -259,7 +259,7 @@ public class TopkCommonWords {
 
         FileSystem fs = FileSystem.get(conf);
         //Path interDirPath = new Path("/home/course/cs4225/cs4225_assign/temp/assign1_inter/A0223939W"); // REPLACE THIS WITH YOUR OWN ID!
-        Path interDirPath = new Path(args[3]+"/A0223939W");
+        Path interDirPath = new Path(args[3]+"/../A0223939W");
 
         Path path = new Path(args[2]);
         BufferedReader br = new BufferedReader(new InputStreamReader(fs.open(path)));
@@ -308,7 +308,6 @@ public class TopkCommonWords {
         FileInputFormat.addInputPath(job2, interDirPath);
         FileOutputFormat.setOutputPath(job2, new Path(args[3]));
 
-        boolean hasCompleted = job2.waitForCompletion(true);
         fs.delete(interDirPath, true); // ONLY call this after your last job has completed to delete your intermediate directory
         System.exit(hasCompleted ? 0 : 1); // there should be NO MORE code below this line
         //System.exit(job.waitForCompletion(true) ? 0 : 1);
