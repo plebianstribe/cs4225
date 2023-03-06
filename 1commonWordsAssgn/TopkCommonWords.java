@@ -235,7 +235,7 @@ public class TopkCommonWords {
         ) throws IOException, InterruptedException {
             String[] smol = values.toString().split("\\n");
             result.set(Integer.parseInt(smol[0]));
-            ArrayList<String> stringList = new ArrayList<String>(Arrays.asList(smol[1:]));
+            ArrayList<String> stringList = new ArrayList<String>(Arrays.asList(smol[]));
             for(String omg: stringList){
                 if(kMap>0 && omg != smol[0]) {
                     word.set(omg);
