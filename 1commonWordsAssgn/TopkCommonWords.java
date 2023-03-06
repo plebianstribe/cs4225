@@ -250,6 +250,7 @@ public class TopkCommonWords {
         ) throws IOException, InterruptedException {
             String[] smol = key.toString().split("\\t");
             result.set(Integer.parseInt(smol[0]));
+            values.set("");
             context.write(result, values);
 
             /*(IntWritable val: values) {
