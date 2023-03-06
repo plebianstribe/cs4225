@@ -211,7 +211,6 @@ public class TopkCommonWords {
                 Collections.sort(asSort);
                 String res = String.join(" ", asSort);
                 word.set(res);
-                System.err.println(res + "RES");
                 context.write(word, count);
             }
         }
@@ -221,8 +220,8 @@ public class TopkCommonWords {
             extends Reducer<Text,IntWritable,IntWritable,Text> {
         private IntWritable result = new IntWritable();
         private Text word = new Text();
-        private TreeMap<Integer, ArrayList<String>> tmap
-                = new TreeMap<>(Collections.reverseOrder());
+        //private TreeMap<Integer, ArrayList<String>> tmap
+                //= new TreeMap<>(Collections.reverseOrder());
         private Integer kMap = 1;
         protected void setup(Context context) {
             Configuration conf = context.getConfiguration();
@@ -233,9 +232,17 @@ public class TopkCommonWords {
         ) throws IOException, InterruptedException {
             String[] smol = key.toString().split("\\s+");
             ArrayList<String> stringList = new ArrayList<String>(Arrays.asList(smol));
-            Integer keyInt = values.get();
-            tmap.put(keyInt, stringList);
+            for(String omg: asSort){
+                if(kMap>0) {
+                    word.set(omg);
+                    context.write(values, word);
+                    kMap -= 1;
+                }
+            }
+            //context.write(values, word);
+            //tmap.put(keyInt, stringList);
         }
+        /*
         protected void cleanup(Context context)
                 throws IOException, InterruptedException
         {
@@ -253,7 +260,7 @@ public class TopkCommonWords {
                     }
                 }
             }
-        }
+        }*/
     }
 
     public static void main(String[] args) throws Exception {
