@@ -4,9 +4,8 @@ NAME: Nicholas Tan Kian Boon
 MATRICULATION NUMBER: A0223939W
 */
 import java.io.*;
-import java.nio.file.Files;
 import java.util.*;
-import java.util.stream.Stream;
+
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -116,7 +115,7 @@ public class TopkCommonWords {
             String[] values = value.toString().split("\\s+");
             String[] stopArray = stopwords.split("\\s+");
             List<String> stopList = new ArrayList<>(Arrays.asList(stopArray));
-            System.err.println(Arrays.toString(stopList.toArray()));
+            //System.err.println(Arrays.toString(stopList.toArray()));
             for (String str : values) {
                 if (str.length() > 4) {
                     if (!stopList.contains(str)) {
@@ -185,7 +184,7 @@ public class TopkCommonWords {
             //Integer keyOut = Integer.parseInt(values[1]);
 
             for (String str : values) {
-                String[] smol = str.split("\\t");
+                String[] smol = str.split("\\t+$");
                 count.set(Integer.parseInt(smol[1]));
                 //word.set(smol[0]);
                 //context.write(count, word);
