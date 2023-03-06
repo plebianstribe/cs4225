@@ -248,8 +248,8 @@ public class TopkCommonWords {
         public void reduce(Text key, Text values,
                            Context context
         ) throws IOException, InterruptedException {
-            result.set(Integer.parseInt(smol[0]));
             String[] smol = key.toString().split("\\t");
+            result.set(Integer.parseInt(smol[0]));
             context.write(result, values);
 
             /*(IntWritable val: values) {
