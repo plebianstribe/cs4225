@@ -210,6 +210,7 @@ public class TopkCommonWords {
                 ArrayList<String> asSort = entry.getValue();
                 Collections.sort(asSort);
                 String res = String.join("\n", asSort);
+                res = Integer.toString(entry.getKey())+ "\n"+res;
                 word.set(res);
                 System.err.println(word+ " HELLO");
                 System.err.println(entry.getKey());
@@ -232,14 +233,12 @@ public class TopkCommonWords {
         public void reduce(IntWritable key, Text values,
                            Context context
         ) throws IOException, InterruptedException {
-            result.set(-1*key.get());
             String[] smol = values.toString().split("\\n");
-            ArrayList<String> stringList = new ArrayList<String>(Arrays.asList(smol));
+            result.set(Integer.parseInt(smol[0]));
+            ArrayList<String> stringList = new ArrayList<String>(Arrays.asList(smol[1:]));
             for(String omg: stringList){
-                if(kMap>0) {
+                if(kMap>0 && omg != smol[0]) {
                     word.set(omg);
-                    System.err.println(result.get());
-                    System.err.println(omg+ " Final Word");
                     context.write(result, word);
                     kMap -= 1;
                 }
