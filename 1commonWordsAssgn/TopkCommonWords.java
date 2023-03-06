@@ -294,6 +294,32 @@ public class TopkCommonWords {
         }*/
     }
 
+    public static class KeyComparator extends WritableComparator {
+
+        protected KeyComparator() {
+            super(Text.class, true);
+        }
+
+        @Override
+        public int compare(WritableComparable w1, WritableComparable w2) {
+
+//descending Int
+
+            Text t1 = (Text) w1;
+            Text t2 = (Text) w2;
+            String[] t1Items = t1.toString().split("\\t");
+            String[] t2Items = t2.toString().split("\\t");
+            String t1Base = t1Items[0] + "\t" + t1Items[1] + "\t";
+            String t2Base = t2Items[0] + "\t" + t2Items[1] + "\t";
+            int comp = t2Base.compareTo(t1Base);
+//ascending Str
+            if (comp == 0) {
+                comp = t1Items[2].compareTo(t2Items[2]);
+            }
+            return comp;
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
 
@@ -333,33 +359,6 @@ public class TopkCommonWords {
         //FileOutputFormat.setOutputPath(job, new Path(args[3]));
 
         job.waitForCompletion(true);
-        public static class KeyComparator extends WritableComparator {
-
-            protected KeyComparator() {
-                super(Text.class, true);
-            }
-
-            @Override
-            public int compare(WritableComparable w1, WritableComparable w2) {
-
-//descending Int
-
-                Text t1 = (Text) w1;
-                Text t2 = (Text) w2;
-                String[] t1Items = t1.toString().split("\\t");
-                String[] t2Items = t2.toString().split("\\t");
-                String t1Base = t1Items[0] + "\t" + t1Items[1] + "\t";
-                String t2Base = t2Items[0] + "\t" + t2Items[1] + "\t";
-                int comp = t2Base.compareTo(t1Base);
-//ascending Str
-                if (comp == 0) {
-                    comp = t1Items[2].compareTo(t2Items[2]);
-                }
-                return comp;
-            }
-        }
-
-
 
         Configuration conf2 = new Configuration();
         conf2.setInt("k", Integer.parseInt(args[4]));
