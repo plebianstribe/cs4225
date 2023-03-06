@@ -261,14 +261,16 @@ public class TopkCommonWords {
 
         Path path = new Path(args[2]);
         BufferedReader br = new BufferedReader(new InputStreamReader(fs.open(path)));
+        String data;
         String line;
         line = br.readLine();
         while (line != null) {
-            line += "\n" +br.readLine();
+            line = br.readLine();
+            data += "\n" + line;
         }
 
-        if(line != null){
-            conf.set("stopwords", line);
+        if(data != null){
+            conf.set("stopwords", data);
         }else{
             conf.set("stopwords", "-1");
         }
