@@ -209,7 +209,7 @@ public class TopkCommonWords {
             Integer countdown = kMap;
             for (Map.Entry<Integer, ArrayList<String>> entry :
                     tmap.entrySet()) {
-                //count.set(entry.getKey());
+                count.set(entry.getKey());
                 ArrayList<String> asSort = entry.getValue();
                 Collections.sort(asSort);
                 for(String omg: asSort){
