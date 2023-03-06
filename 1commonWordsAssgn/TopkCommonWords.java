@@ -179,6 +179,7 @@ public class TopkCommonWords {
             //Integer keyOut = Integer.parseInt(values[1]);
 
             for (String str : values) {
+                System.err.println(str + " HELLO");
                 String[] smol = str.split("\\t+$");
                 count.set(Integer.parseInt(smol[1]));
                 //word.set(smol[0]);
