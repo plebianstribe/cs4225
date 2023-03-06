@@ -236,12 +236,14 @@ public class TopkCommonWords {
         private Text word = new Text();
         private IntWritable result = new IntWritable();
         NullWritable exit = NullWritable.get();
+
         //private TreeMap<Integer, ArrayList<String>> tmap
-                //= new TreeMap<>(Collections.reverseOrder());
+        //= new TreeMap<>(Collections.reverseOrder());
         public void reduce(Text key, Text values,
                            Context context
         ) throws IOException, InterruptedException {
             context.write(key, exit);
+        }
     }
 
     public static class KeyComparator extends WritableComparator {
