@@ -206,7 +206,7 @@ public class TopkCommonWords {
             Integer countdown = kMap;
             for (Map.Entry<Integer, ArrayList<String>> entry :
                     tmap.entrySet()) {
-                count.set(entry.getKey());
+                count.set(-1*entry.getKey());
                 ArrayList<String> asSort = entry.getValue();
                 Collections.sort(asSort);
                 String res = String.join("\n", asSort);
@@ -221,6 +221,7 @@ public class TopkCommonWords {
     public static class SortReduce
             extends Reducer<IntWritable,Text,IntWritable,Text> {
         private Text word = new Text();
+        private IntWritable result = new IntWritable();
         //private TreeMap<Integer, ArrayList<String>> tmap
                 //= new TreeMap<>(Collections.reverseOrder());
         private Integer kMap = 1;
@@ -231,12 +232,15 @@ public class TopkCommonWords {
         public void reduce(IntWritable key, Text values,
                            Context context
         ) throws IOException, InterruptedException {
+            result = -1*key.get();
             String[] smol = values.toString().split("\\n");
             ArrayList<String> stringList = new ArrayList<String>(Arrays.asList(smol));
             for(String omg: stringList){
                 if(kMap>0) {
                     word.set(omg);
-                    context.write(key, word);
+                    System.err.println(result.get().toString()+ " Final Count");
+                    System.err.println(word.get()+ " Final Word");
+                    context.write(result, word);
                     kMap -= 1;
                 }
             }
