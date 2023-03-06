@@ -229,12 +229,12 @@ public class TopkCommonWords {
             Integer countdown = kMap;
             for (Map.Entry<Integer, ArrayList<String>> entry :
                     tmap.entrySet()) {
-                count.set(entry.getKey());
+                result.set(entry.getKey());
                 ArrayList<String> asSort = entry.getValue();
                 for(String omg: asSort){
                     if(countdown>0) {
                         word.set(omg);
-                        context.write(count, word);
+                        context.write(result, word);
                         countdown -= 1;
                     }
                 }
