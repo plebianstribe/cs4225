@@ -154,10 +154,12 @@ public class TopkCommonWords {
 
             if(sumA > sumB && sumB != 0){
                 result.set(sumB);
+                System.err.println(key.toString());
                 context.write(key, result);
             }
             else if(sumA != 0){
                 result.set(sumA);
+                System.err.println(key.toString());
                 context.write(key, result);
             }
         }
