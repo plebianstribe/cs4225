@@ -261,7 +261,7 @@ public class TopkCommonWords {
 
         Path path = new Path(args[2]);
         BufferedReader br = new BufferedReader(new InputStreamReader(fs.open(path)));
-        String data;
+        String data = new String();
         String line;
         line = br.readLine();
         while (line != null) {
