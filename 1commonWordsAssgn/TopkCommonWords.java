@@ -263,7 +263,8 @@ public class TopkCommonWords {
         Configuration conf = new Configuration();
 
         FileSystem fs = FileSystem.get(conf);
-        Path interDirPath = new Path("/home/course/cs4225/cs4225_assign/temp/assign1_inter/A0223939W"); // REPLACE THIS WITH YOUR OWN ID!
+        //Path interDirPath = new Path("/home/course/cs4225/cs4225_assign/temp/assign1_inter/A0223939W"); // REPLACE THIS WITH YOUR OWN ID!
+        Path interDirPath = new Path("/cs4225/assign1_inter/A0223939W");
 
         Path path = new Path(args[2]);
         BufferedReader br = new BufferedReader(new InputStreamReader(fs.open(path)));
