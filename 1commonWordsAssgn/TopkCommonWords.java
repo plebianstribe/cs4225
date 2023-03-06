@@ -161,9 +161,10 @@ public class TopkCommonWords {
     }
 
     public static class SortMap
-            extends Mapper<Object, Text, Text, IntWritable>{
+            extends Mapper<Object, Text, Text, Text>{
         private IntWritable count = new IntWritable();
         private Text word = new Text();
+        private Text phrase = new Text();
         private TreeMap<Integer, ArrayList<String>> tmap
                 = new TreeMap<>(Collections.reverseOrder());
         private Integer kMap = 1;
@@ -206,13 +207,15 @@ public class TopkCommonWords {
             Integer countdown = kMap;
             for (Map.Entry<Integer, ArrayList<String>> entry :
                     tmap.entrySet()) {
-                count.set(entry.getKey());
+                //count.set(entry.getKey());
                 ArrayList<String> asSort = entry.getValue();
                 Collections.sort(asSort);
                 for(String omg: asSort){
                     if(countdown>0) {
-                        word.set(omg);
-                        context.write(word, count);
+                        word.set(Integer.toString(count.get())+"\t"+omg);
+                        phrase.set(omg);
+                        //Later sort Int(descending) then secondary sort Str(ascending)
+                        context.write(word, phrase);
                         countdown -= 1;
                     }
                 }
@@ -230,7 +233,7 @@ public class TopkCommonWords {
     }
 
     public static class SortReduce
-            extends Reducer<Text,IntWritable,IntWritable,Text> {
+            extends Reducer<Text,Text,IntWritable,Text> {
         private Text word = new Text();
         private IntWritable result = new IntWritable();
         //private TreeMap<Integer, ArrayList<String>> tmap
@@ -240,12 +243,17 @@ public class TopkCommonWords {
             Configuration conf = context.getConfiguration();
             kMap = Integer.parseInt(conf.get("k"));
         }
-        public void reduce(Text key, Iterable<IntWritable> values,
+        public void reduce(Text key, Text values,
                            Context context
         ) throws IOException, InterruptedException {
-            for(IntWritable val: values) {
+            String[] smol = key.toString().split("\\t");
+            context.write(Integer.parseInt(smol[0]), values);
+
+            /*(IntWritable val: values) {
                 context.write(val, key);
             }
+
+             */
 
 
             /*
@@ -325,15 +333,43 @@ public class TopkCommonWords {
         //FileOutputFormat.setOutputPath(job, new Path(args[3]));
 
         job.waitForCompletion(true);
+        public static class KeyComparator extends WritableComparator {
+
+            protected KeyComparator() {
+                super(Text.class, true);
+            }
+
+            @Override
+            public int compare(WritableComparable w1, WritableComparable w2) {
+
+//descending Int
+
+                Text t1 = (Text) w1;
+                Text t2 = (Text) w2;
+                String[] t1Items = t1.toString().split("\\t");
+                String[] t2Items = t2.toString().split("\\t");
+                String t1Base = t1Items[0] + "\t" + t1Items[1] + "\t";
+                String t2Base = t2Items[0] + "\t" + t2Items[1] + "\t";
+                int comp = t2Base.compareTo(t1Base);
+//ascending Str
+                if (comp == 0) {
+                    comp = t1Items[2].compareTo(t2Items[2]);
+                }
+                return comp;
+            }
+        }
+
+
 
         Configuration conf2 = new Configuration();
         conf2.setInt("k", Integer.parseInt(args[4]));
         Job job2 = Job.getInstance(conf2, "Sorting");
+        job2.setSortComparatorClass(KeyComparator.class);
         job2.setJarByClass(TopkCommonWords.class);
         job2.setMapperClass(SortMap.class);
         job2.setReducerClass(SortReduce.class);
         job2.setMapOutputKeyClass(Text.class);
-        job2.setMapOutputValueClass(IntWritable.class);
+        job2.setMapOutputValueClass(Text.class);
         job2.setNumReduceTasks(1);
         job2.setOutputKeyClass(IntWritable.class);
         job2.setOutputValueClass(Text.class);
