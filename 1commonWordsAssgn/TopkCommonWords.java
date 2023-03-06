@@ -165,7 +165,7 @@ public class TopkCommonWords {
             }
         }
     }
-/*
+
     public static class SortMap
             extends Mapper<Object, Text, Text, IntWritable>{
         private IntWritable count = new IntWritable();
@@ -263,7 +263,6 @@ public class TopkCommonWords {
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
 
-
         FileSystem fs = FileSystem.get(conf);
         Path interDirPath = new Path("/home/course/cs4225/cs4225_assign/temp/assign1_inter/A0223939W"); // REPLACE THIS WITH YOUR OWN ID!
 
@@ -295,9 +294,9 @@ public class TopkCommonWords {
         //FileInputFormat.addInputPaths(job, args[0]+","+args[1]);
         MultipleInputs.addInputPath(job,new Path(args[0]), TextInputFormat.class, MapperOne.class);
         MultipleInputs.addInputPath(job,new Path(args[1]), TextInputFormat.class, MapperTwo.class);
-        //FileOutputFormat.setOutputPath(job, interDirPath);
-        FileOutputFormat.setOutputPath(job, new Path(args[3]));
-/*
+        FileOutputFormat.setOutputPath(job, interDirPath);
+        //FileOutputFormat.setOutputPath(job, new Path(args[3]));
+
         job.waitForCompletion(true);
 
         Configuration conf2 = new Configuration();
@@ -317,7 +316,6 @@ public class TopkCommonWords {
         boolean hasCompleted = job2.waitForCompletion(true);
         fs.delete(interDirPath, true); // ONLY call this after your last job has completed to delete your intermediate directory
         System.exit(hasCompleted ? 0 : 1); // there should be NO MORE code below this line
-*/
-        System.exit(job.waitForCompletion(true) ? 0 : 1);
+        //System.exit(job.waitForCompletion(true) ? 0 : 1);
     }
 }
