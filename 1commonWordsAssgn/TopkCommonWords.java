@@ -108,11 +108,13 @@ public class TopkCommonWords {
             //Makes an array of individual words split by separators give
             //Runs through array and writes output for each entry IF it does not appear in stopwords AND longer than 4 characters
             String[] values = value.toString().split("\\s+");
+            System.err.println(Arrays.toString(stopList.toArray()));
             for (String str : values) {
                 if (str.length() > 4) {
                     if (!stopList.contains(str)) {
                         word.set(str);
                         context.write(word, two);
+                    }else{
                     }
                 }
             }
@@ -195,14 +197,9 @@ public class TopkCommonWords {
                 count.set(entry.getKey());
                 ArrayList<String> asSort = entry.getValue();
                 Collections.sort(asSort);
-                String res = String.join(",", asSort);
-                for(String omg: asSort){
-                    if(countdown>0) {
-                        word.set(res);
-                        context.write(word, count);
-                        countdown -= 1;
-                    }
-                }
+                String res = String.join(" ", asSort);
+                word.set(res);
+                context.write(word, count);
             }
         }
     }
@@ -211,15 +208,36 @@ public class TopkCommonWords {
             extends Reducer<Text,IntWritable,IntWritable,Text> {
         private IntWritable result = new IntWritable();
         private Text word = new Text();
-        private TreeMap<Integer, ArrayList<String>> tmap;
-
+        private TreeMap<Integer, ArrayList<String>> tmap
+                = new TreeMap<>(Collections.reverseOrder());
+        private Integer kMap = 1;
+        protected void setup(Context context) {
+            Configuration conf = context.getConfiguration();
+            kMap = Integer.parseInt(conf.get("k"));
+        }
         public void reduce(Text key, IntWritable values,
                            Context context
         ) throws IOException, InterruptedException {
-            String[] smol = key.toString().split(",");
-            for (String str : smol) {
-                word.set(str);
-                context.write(values, word);
+            String[] smol = key.toString().split(" ");
+            ArrayList<String> stringList = new ArrayList<String>(Arrays.asList(smol));
+            Integer keyInt = values.get();
+            tmap.put(keyInt, stringList);
+        }
+        protected void cleanup(Context context)
+                throws IOException, InterruptedException
+        {
+            Integer countdown = kMap;
+            for (Map.Entry<Integer, ArrayList<String>> entry :
+                    tmap.entrySet()) {
+                count.set(entry.getKey());
+                ArrayList<String> asSort = entry.getValue();
+                for(String omg: asSort){
+                    if(countdown>0) {
+                        word.set(omg);
+                        context.write(count, word);
+                        countdown -= 1;
+                    }
+                }
             }
         }
     }
