@@ -147,11 +147,16 @@ public class TopkCommonWords {
                     sumB += 1;
                 }
             }
+            System.err.println("a and B are");
+            System.err.println(sumA);
+            System.err.println(sumA);
+            System.err.println("end!");
+
             if(sumA > sumB && sumB != 0){
                 result.set(sumB);
                 context.write(key, result);
             }
-            else {
+            else if(sumA != 0){
                 result.set(sumA);
                 context.write(key, result);
             }
