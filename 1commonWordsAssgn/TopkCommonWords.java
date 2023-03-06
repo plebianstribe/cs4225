@@ -113,6 +113,8 @@ public class TopkCommonWords {
                     if (!stopList.contains(str)) {
                         word.set(str);
                         context.write(word, two);
+                    }else{
+                        System.out.println(str);
                     }
                 }
             }
