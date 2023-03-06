@@ -218,7 +218,6 @@ public class TopkCommonWords {
 
     public static class SortReduce
             extends Reducer<Text,IntWritable,IntWritable,Text> {
-        private IntWritable result = new IntWritable();
         private Text word = new Text();
         //private TreeMap<Integer, ArrayList<String>> tmap
                 //= new TreeMap<>(Collections.reverseOrder());
@@ -232,7 +231,7 @@ public class TopkCommonWords {
         ) throws IOException, InterruptedException {
             String[] smol = key.toString().split("\\s+");
             ArrayList<String> stringList = new ArrayList<String>(Arrays.asList(smol));
-            for(String omg: asSort){
+            for(String omg: stringList){
                 if(kMap>0) {
                     word.set(omg);
                     context.write(values, word);
