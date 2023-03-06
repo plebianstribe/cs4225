@@ -233,10 +233,10 @@ public class TopkCommonWords {
     }
 
     public static class SortReduce
-            extends Reducer<Text,Text,IntWritable,NullWritable> {
+            extends Reducer<Text,Text,Text,NullWritable> {
         private Text word = new Text();
         private IntWritable result = new IntWritable();
-        private NullWritable exit = new NullWritable();
+        NullWritable exit = NullWritable.get();
         //private TreeMap<Integer, ArrayList<String>> tmap
                 //= new TreeMap<>(Collections.reverseOrder());
         private Integer kMap = 1;
@@ -381,7 +381,7 @@ public class TopkCommonWords {
         job2.setMapOutputKeyClass(Text.class);
         job2.setMapOutputValueClass(Text.class);
         job2.setNumReduceTasks(1);
-        job2.setOutputKeyClass(IntWritable.class);
+        job2.setOutputKeyClass(Text.class);
         job2.setOutputValueClass(NullWritable.class);
         FileInputFormat.addInputPath(job2, interDirPath);
         FileOutputFormat.setOutputPath(job2, new Path(args[3]));
