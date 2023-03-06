@@ -232,7 +232,7 @@ public class TopkCommonWords {
         public void reduce(IntWritable key, Text values,
                            Context context
         ) throws IOException, InterruptedException {
-            result = -1*key.get();
+            result.set(-1*key.get());
             String[] smol = values.toString().split("\\n");
             ArrayList<String> stringList = new ArrayList<String>(Arrays.asList(smol));
             for(String omg: stringList){
