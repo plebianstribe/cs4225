@@ -315,9 +315,11 @@ public class TopkCommonWords {
             String[] t2Items = t2.toString().split("\\t");
             int comp = t2Items[0].compareTo(t1Items[0]);
 //ascending Str
-            if (comp == 0) {
+            /*if (comp == 0) {
                 comp = t1Items[1].compareTo(t2Items[1]);
             }
+
+             */
             return -1*comp;
         }
     }
