@@ -12,6 +12,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.WritableComparator;
+import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -247,8 +248,9 @@ public class TopkCommonWords {
         public void reduce(Text key, Text values,
                            Context context
         ) throws IOException, InterruptedException {
+            result.set(Integer.parseInt(smol[0]));
             String[] smol = key.toString().split("\\t");
-            context.write(Integer.parseInt(smol[0]), values);
+            context.write(result, values);
 
             /*(IntWritable val: values) {
                 context.write(val, key);
