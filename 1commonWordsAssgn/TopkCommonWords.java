@@ -30,11 +30,14 @@ public class TopkCommonWords {
 
         private final static IntWritable one = new IntWritable(1);
         private Text word = new Text("OneNotWorking");
-        private List<String> stopList = new ArrayList<String>();
+        //private List<String> stopList = new ArrayList<String>();
+        private String stopwords = new String("");
 
-        protected void setup(JobConf conf) throws IOException, InterruptedException {
-            //Configuration conf = context.getConfiguration();
-            //stopwords = conf.get("stopwords");
+        protected void setup(Context context) throws IOException, InterruptedException {
+            Configuration conf = context.getConfiguration();
+            stopwords = conf.get("stopwords");
+
+            /*
             Path[] patternsFiles = new Path[0];
             try {
                 patternsFiles = DistributedCache.getLocalCacheFiles(conf);
@@ -52,6 +55,7 @@ public class TopkCommonWords {
                     System.err.println("Caught exception while parsing the cached file '" + patternsFile + "' : " + StringUtils.stringifyException(ioe));
                 }
             }
+            */
         }
 
         public void map(Object key, Text value, Context context
@@ -59,6 +63,8 @@ public class TopkCommonWords {
             //Makes an array of individual words split by separators give
             //Runs through array and writes output for each entry IF it does not appear in stopwords AND longer than 4 characters
             String[] values = value.toString().split("\\s+");
+            String[] stopArray = stopwords.split("\\s+");
+            List<String> stopList = new ArrayList<>(Arrays.asList(stopArray));
             for (String str : values) {
                 if (str.length() > 4) {
                     if (!stopList.contains(str)) {
@@ -75,13 +81,14 @@ public class TopkCommonWords {
 
         private IntWritable two = new IntWritable(2);
         private Text word = new Text("mapperNotWorking");
-        private List<String> stopList = new ArrayList<String>();
+        //private List<String> stopList = new ArrayList<String>();
+        private String stopwords = new String("");
 
         protected void setup(Context context) throws IOException, InterruptedException {
-            //Configuration conf = context.getConfiguration();
-            //stopwords = conf.get("stopwords");
-
             Configuration conf = context.getConfiguration();
+            stopwords = conf.get("stopwords");
+
+            /*
             Path[] patternsFiles = new Path[0];
             try {
                 patternsFiles = DistributedCache.getLocalCacheFiles(conf);
@@ -99,6 +106,7 @@ public class TopkCommonWords {
                     System.err.println("Caught exception while parsing the cached file '" + patternsFile + "' : " + StringUtils.stringifyException(ioe));
                 }
             }
+            */
         }
 
         public void map(Object key, Text value, Context context
@@ -106,6 +114,8 @@ public class TopkCommonWords {
             //Makes an array of individual words split by separators give
             //Runs through array and writes output for each entry IF it does not appear in stopwords AND longer than 4 characters
             String[] values = value.toString().split("\\s+");
+            String[] stopArray = stopwords.split("\\s+");
+            List<String> stopList = new ArrayList<>(Arrays.asList(stopArray));
             System.err.println(Arrays.toString(stopList.toArray()));
             for (String str : values) {
                 if (str.length() > 4) {
@@ -249,12 +259,17 @@ public class TopkCommonWords {
         FileSystem fs = FileSystem.get(conf);
         Path interDirPath = new Path("/home/course/cs4225/cs4225_assign/temp/assign1_inter/A0223939W"); // REPLACE THIS WITH YOUR OWN ID!
 
-        JobConf fileJob = new JobConf();
-        DistributedCache.addCacheFile(new Path(args[2]).toUri(), fileJob);
+        Path path = new Path(args[2]);
+        BufferedReader br = new BufferedReader(new InputStreamReader(fs.open(path)));
+        String line;
+        line = br.readLine();
+        while (line != null) {
+            System.out.println(line);
+            line = br.readLine();
+        }
 
-
-        //conf.set("stopwords", data);
-        //conf.set("Separator.common", "\\s+");
+        conf.set("stopwords", line);
+        conf.set("Separator.common", "\\s+");
 
         //\s\t\n\r\f
         Job job = Job.getInstance(conf, "Top k Common Words");
