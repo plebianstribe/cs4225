@@ -161,10 +161,10 @@ public class TopkCommonWords {
     }
 
     public static class SortMap
-            extends Mapper<Object, Text, Text, Text>{
-        private IntWritable count = new IntWritable();
+            extends Mapper<Object, Text, Text, NullWritable>{
         private Text word = new Text();
-        private Text phrase = new Text();
+        private IntWritable count = new IntWritable();
+        NullWritable exit = NullWritable.get();
         private TreeMap<Integer, ArrayList<String>> tmap
                 = new TreeMap<>(Collections.reverseOrder());
         private Integer kMap = 1;
@@ -213,9 +213,8 @@ public class TopkCommonWords {
                 for(String omg: asSort){
                     if(countdown>0) {
                         word.set(Integer.toString(count.get())+"\t"+omg);
-                        phrase.set(omg);
                         //Later sort Int(descending) then secondary sort Str(ascending)
-                        context.write(word, phrase);
+                        context.write(word, exit);
                         countdown -= 1;
                     }
                 }
@@ -239,61 +238,10 @@ public class TopkCommonWords {
         NullWritable exit = NullWritable.get();
         //private TreeMap<Integer, ArrayList<String>> tmap
                 //= new TreeMap<>(Collections.reverseOrder());
-        private Integer kMap = 1;
-        protected void setup(Context context) {
-            Configuration conf = context.getConfiguration();
-            kMap = Integer.parseInt(conf.get("k"));
-        }
         public void reduce(Text key, Text values,
                            Context context
         ) throws IOException, InterruptedException {
-            String[] smol = key.toString().split("\\t");
-            result.set(Integer.parseInt(smol[0]));
             context.write(key, exit);
-
-            /*(IntWritable val: values) {
-                context.write(val, key);
-            }
-
-             */
-
-
-            /*
-            String[] smol = values.toString().split("\\n");
-            result.set(Integer.parseInt(smol[0]));
-            ArrayList<String> stringList = new ArrayList<String>(Arrays.asList(smol));
-            for(String omg: stringList){
-                if(kMap>0 && omg != smol[0]) {
-                    word.set(omg);
-                    context.write(result, word);
-                    kMap -= 1;
-                }
-            }
-            */
-
-
-            //context.write(values, word);
-            //tmap.put(keyInt, stringList);
-        }
-        /*
-        protected void cleanup(Context context)
-                throws IOException, InterruptedException
-        {
-            Integer countdown = kMap;
-            for (Map.Entry<Integer, ArrayList<String>> entry :
-                    tmap.entrySet()) {
-                result.set(entry.getKey());
-                ArrayList<String> asSort = entry.getValue();
-                for(String omg: asSort){
-                    if(countdown>0) {
-                        System.err.println(omg+ " HELLO");
-                        word.set("TEST");
-                        context.write(result, word);
-                        countdown -= 1;
-                    }
-                }
-            }
-        }*/
     }
 
     public static class KeyComparator extends WritableComparator {
@@ -379,7 +327,7 @@ public class TopkCommonWords {
         job2.setMapperClass(SortMap.class);
         job2.setReducerClass(SortReduce.class);
         job2.setMapOutputKeyClass(Text.class);
-        job2.setMapOutputValueClass(Text.class);
+        job2.setMapOutputValueClass(NullWritable.class);
         job2.setNumReduceTasks(1);
         job2.setOutputKeyClass(Text.class);
         job2.setOutputValueClass(NullWritable.class);
