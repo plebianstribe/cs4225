@@ -161,7 +161,7 @@ public class TopkCommonWords {
     }
 
     public static class SortMap
-            extends Mapper<Object, Text, Text, IntWritable>{
+            extends Mapper<Object, Text, IntWritable, Text>{
         private IntWritable count = new IntWritable();
         private Text word = new Text();
         private TreeMap<Integer, ArrayList<String>> tmap
@@ -209,15 +209,17 @@ public class TopkCommonWords {
                 count.set(entry.getKey());
                 ArrayList<String> asSort = entry.getValue();
                 Collections.sort(asSort);
-                String res = String.join("\\n", asSort);
+                String res = String.join("\n", asSort);
                 word.set(res);
-                context.write(word, count);
+                System.err.println(word+ " HELLO");
+                System.err.println(entry.getKey());
+                context.write(count, word);
             }
         }
     }
 
     public static class SortReduce
-            extends Reducer<Text,IntWritable,IntWritable,Text> {
+            extends Reducer<IntWritable,Text,IntWritable,Text> {
         private Text word = new Text();
         //private TreeMap<Integer, ArrayList<String>> tmap
                 //= new TreeMap<>(Collections.reverseOrder());
@@ -226,15 +228,15 @@ public class TopkCommonWords {
             Configuration conf = context.getConfiguration();
             kMap = Integer.parseInt(conf.get("k"));
         }
-        public void reduce(Text key, IntWritable values,
+        public void reduce(IntWritable key, Text values,
                            Context context
         ) throws IOException, InterruptedException {
-            String[] smol = key.toString().split("\\n");
+            String[] smol = values.toString().split("\\n");
             ArrayList<String> stringList = new ArrayList<String>(Arrays.asList(smol));
             for(String omg: stringList){
                 if(kMap>0) {
                     word.set(omg);
-                    context.write(values, word);
+                    context.write(key, word);
                     kMap -= 1;
                 }
             }
@@ -308,8 +310,8 @@ public class TopkCommonWords {
         job2.setJarByClass(TopkCommonWords.class);
         job2.setMapperClass(SortMap.class);
         job2.setReducerClass(SortReduce.class);
-        job2.setMapOutputKeyClass(Text.class);
-        job2.setMapOutputValueClass(IntWritable.class);
+        job2.setMapOutputKeyClass(IntWritable.class);
+        job2.setMapOutputValueClass(Text.class);
         job2.setNumReduceTasks(1);
         job2.setOutputKeyClass(IntWritable.class);
         job2.setOutputValueClass(Text.class);
