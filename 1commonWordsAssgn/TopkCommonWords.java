@@ -179,7 +179,6 @@ public class TopkCommonWords {
             //Integer keyOut = Integer.parseInt(values[1]);
 
             for (String str : values) {
-                System.err.println(str + " HELLO");
                 String[] smol = str.split("[^\\S\\r\\n]+");
                 count.set(Integer.parseInt(smol[1]));
                 //word.set(smol[0]);
@@ -231,7 +230,7 @@ public class TopkCommonWords {
         public void reduce(Text key, IntWritable values,
                            Context context
         ) throws IOException, InterruptedException {
-            String[] smol = key.toString().split(" ");
+            String[] smol = key.toString().split("\\s+");
             ArrayList<String> stringList = new ArrayList<String>(Arrays.asList(smol));
             Integer keyInt = values.get();
             tmap.put(keyInt, stringList);
@@ -246,6 +245,7 @@ public class TopkCommonWords {
                 ArrayList<String> asSort = entry.getValue();
                 for(String omg: asSort){
                     if(countdown>0) {
+                        System.err.println(omg+ " HELLO");
                         word.set(omg);
                         context.write(result, word);
                         countdown -= 1;
