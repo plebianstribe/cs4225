@@ -259,7 +259,7 @@ public class TopkCommonWords {
             }
         }
     }
-*/
+
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
 
