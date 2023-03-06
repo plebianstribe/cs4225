@@ -312,12 +312,10 @@ public class TopkCommonWords {
             Text t2 = (Text) w2;
             String[] t1Items = t1.toString().split("\\t");
             String[] t2Items = t2.toString().split("\\t");
-            String t1Base = t1Items[0] + "\t" + t1Items[1] + "\t";
-            String t2Base = t2Items[0] + "\t" + t2Items[1] + "\t";
-            int comp = t2Base.compareTo(t1Base);
+            int comp = t2Items[0].compareTo(t1Items[0]);
 //ascending Str
             if (comp == 0) {
-                comp = t1Items[2].compareTo(t2Items[2]);
+                comp = t1Items[1].compareTo(t2Items[1]);
             }
             return comp;
         }
