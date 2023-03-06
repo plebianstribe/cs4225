@@ -148,15 +148,12 @@ public class TopkCommonWords {
                 }
             }
 
-            if(sumA > sumB && sumB != 0){
+            if(sumA >= sumB && sumB != 0){
                 result.set(sumB);
                 context.write(key, result);
             }
-            else if(sumA != 0){
+            else if(sumA <= sumB && sumA != 0){
                 result.set(sumA);
-                context.write(key, result);
-            }else if (sumB != 0){
-                result.set(sumB);
                 context.write(key, result);
             }
         }
@@ -235,9 +232,10 @@ public class TopkCommonWords {
     }
 
     public static class SortReduce
-            extends Reducer<Text,Text,IntWritable,Text> {
+            extends Reducer<Text,Text,IntWritable,NullWritable> {
         private Text word = new Text();
         private IntWritable result = new IntWritable();
+        private NullWritable exit = new NullWritable();
         //private TreeMap<Integer, ArrayList<String>> tmap
                 //= new TreeMap<>(Collections.reverseOrder());
         private Integer kMap = 1;
@@ -250,8 +248,7 @@ public class TopkCommonWords {
         ) throws IOException, InterruptedException {
             String[] smol = key.toString().split("\\t");
             result.set(Integer.parseInt(smol[0]));
-            values.set("");
-            context.write(result, values);
+            context.write(key, exit);
 
             /*(IntWritable val: values) {
                 context.write(val, key);
@@ -384,7 +381,7 @@ public class TopkCommonWords {
         job2.setMapOutputValueClass(Text.class);
         job2.setNumReduceTasks(1);
         job2.setOutputKeyClass(IntWritable.class);
-        job2.setOutputValueClass(Text.class);
+        job2.setOutputValueClass(NullWritable.class);
         FileInputFormat.addInputPath(job2, interDirPath);
         FileOutputFormat.setOutputPath(job2, new Path(args[3]));
 
