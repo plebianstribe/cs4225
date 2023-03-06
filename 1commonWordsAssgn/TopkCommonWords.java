@@ -318,7 +318,7 @@ public class TopkCommonWords {
             if (comp == 0) {
                 comp = t1Items[1].compareTo(t2Items[1]);
             }
-            return comp;
+            return -1*comp;
         }
     }
 
