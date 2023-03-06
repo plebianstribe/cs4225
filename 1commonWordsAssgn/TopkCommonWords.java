@@ -211,6 +211,7 @@ public class TopkCommonWords {
                 Collections.sort(asSort);
                 String res = String.join(" ", asSort);
                 word.set(res);
+                System.err.println(res + "RES");
                 context.write(word, count);
             }
         }
@@ -246,7 +247,7 @@ public class TopkCommonWords {
                 for(String omg: asSort){
                     if(countdown>0) {
                         System.err.println(omg+ " HELLO");
-                        word.set(omg);
+                        word.set("TEST");
                         context.write(result, word);
                         countdown -= 1;
                     }
