@@ -149,7 +149,7 @@ public class TopkCommonWords {
             }
             System.err.println("a and B are");
             System.err.println(sumA);
-            System.err.println(sumA);
+            System.err.println(sumB);
             System.err.println("end!");
 
             if(sumA > sumB && sumB != 0){
