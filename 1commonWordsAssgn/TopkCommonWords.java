@@ -264,11 +264,15 @@ public class TopkCommonWords {
         String line;
         line = br.readLine();
         while (line != null) {
-            System.out.println(line);
-            line = br.readLine();
+            line += "\n" +br.readLine();
         }
 
-        conf.set("stopwords", line);
+        if(line != null){
+            conf.set("stopwords", line);
+        }else{
+            conf.set("stopwords", "-1");
+        }
+
         conf.set("Separator.common", "\\s+");
 
         //\s\t\n\r\f
